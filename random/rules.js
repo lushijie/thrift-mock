@@ -27,5 +27,15 @@ module.exports = {
 
   id() {
     return 'id123';
+  },
+
+  address() {
+    return {
+      a: 123,
+    }
+  },
+
+  code() {
+    return 'code123';
   }
 }

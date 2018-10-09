@@ -8,8 +8,7 @@ const fs = require('fs');
 const path = require('path');
 const Thriftrw = require('thriftrw').Thrift;
 const Convert = require('./convert');
-const Radom = require('./random');
-// const Utils = require('core-util-is');
+const RadomGen = require('./random/gen.js');
 const source = fs.readFileSync(path.join(__dirname, 'thrift.idl'), 'ascii');
 
 const STORE = {
@@ -35,41 +34,20 @@ DEFINITIONS.forEach(ele => {
   const fn = Convert[type];
   fn(ele, STORE[type]);
 });
-// console.log(JSON.stringify(STORE));
+console.log(JSON.stringify(STORE, undefined, 2));
 
 // const parser = require('node-thrift-parser');
 // console.log(JSON.stringify(parser(source)));
 
-function createGen(store) {
-  return function gen(type, name, mapKey = {}) {
-    const item = {};
-    const syntax = store[type][name];
 
-    Object.keys(syntax).forEach(key => {
-      const value = syntax[key];
+// const myGen = RadomGen(STORE, {
+//   Address: {
+//     code() {
+//       return 'aaa';
+//     }
+//   }
+// });
 
-      let valueType = value.type;
-      if (mapKey[name] && mapKey[name][key]) {
-        valueType = mapKey[name][key];
-      }
-      if (value.type) {
-        item[key] = Radom[valueType]();
-      }
-
-      if (value.refer) {
-        item[key] = gen('struct', value.refer);
-      }
-    });
-    return item;
-  }
-}
-
-const myGen = createGen(STORE);
-
-const res = myGen('struct', 'User', {
-  User: {
-    id: 'id'
-  }
-});
-console.log(res);
+// const res = myGen('struct', 'Address');
+// console.log(res);
 
