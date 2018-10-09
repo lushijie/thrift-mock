@@ -7,13 +7,26 @@ module.exports = function(ast, store) {
     const field = {
       refer: null,
       type: null,
-      defaultValue: ele.defaultValue && ele.defaultValue.value,
+      defaultValue: null,
       optional: ele.optional,
       required: ele.required,
       list: null,
       map: null,
       set: null
     }
+
+    if (ele.defaultValue) {
+      if (ele.defaultValue.value) {
+        field.defaultValue = {
+          value: ele.defaultValue.value
+        }
+      } else if (ele.defaultValue.type === 'Identifier') {
+        field.defaultValue = {
+          refer: ele.defaultValue.name
+        }
+      }
+    }
+
     switch(ele.valueType.type) {
       case 'BaseType':
         field.type = ele.valueType.baseType;
