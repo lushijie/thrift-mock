@@ -69,16 +69,16 @@
 //   2: optional i32    poiId;
 // }
 
-// struct User {
-//   1: i32 id,
-//   2: string name,
-// }
-
-
-service MyService {
-  void ping(),
-  i32 ping2(),
-  // i32 add(1:i32 num1, 2:string num2),
-  // i32 calculate(1:i32 logid, 2:Work w) throws (1:InvalidOperation ouch),
-  // User getUser(1:i32 id),
+struct User {
+  1: i32 id,
+  2: string name,
 }
+
+
+// service MyService {
+//   void ping(),
+//   list<i32> ping2(),
+//   // i32 add(1:i32 num1, 2:string num2),
+//   // i32 calculate(1:i32 logid, 2:Work w) throws (1:InvalidOperation ouch),
+//   // User getUser(1:i32 id),
+// }

@@ -1,4 +1,4 @@
-const Utils = require('../utils');
+const Tool = require('../tool');
 
 const Processor = {
   const: require('./processor/const'),
@@ -8,7 +8,7 @@ const Processor = {
 
 module.exports = function(store, mapKey) {
   return function gen(name) {
-    const type = Utils.findThriftType(store, name);
+    const type = Tool.findThriftType(store, name);
     return Processor[type](store, type, name);
   }
 }

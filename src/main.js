@@ -6,7 +6,7 @@
  */
 const fs = require('fs');
 const path = require('path');
-const Utils = require('./utils');
+const Utils = require('@lushijie/utils');
 const Thriftrw = require('thriftrw').Thrift;
 const Parser = require('./parser');
 const Generator = require('./generator');
@@ -40,7 +40,7 @@ function secondParse(store, thriftrw) {
   firstParse(thriftrw).forEach(ele => {
     const type = ele.type.toLowerCase();
     const fn = Parser[type];
-    if (Utils.is.isFunction(fn)) {
+    if (Utils.isFunction(fn)) {
       fn(ele, store[type]);
       return;
     }
