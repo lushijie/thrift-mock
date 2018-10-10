@@ -1,11 +1,10 @@
 const i32 CUT_TIME = 10;
-// const map<string, string> FOOD_TYPE_MAP = {
-// 	'1': 'chuangcai',
-// 	'2': 'lucai'
-// }
-// const list<string> Year = ['2012', '2013', '2014']
-// const set<i32> Month = ['1', '2', '3']
-
+const map<string, string> FOOD_TYPE_MAP = {
+	'1': 'chuangcai',
+	'2': 'lucai'
+}
+const list<string> Year = ['2012', '2013', '2014']
+const set<i32> Month = ['1', '2', '3']
 
 // exception IException {
 //   1: i32 errno = 500,
@@ -34,22 +33,28 @@ enum Sex {
 // 	// 8: map<Address, i32> gradeTeacher;
 // }
 
-/**
-	comment3
-**/
-struct Address {
-	1: string city = 'beijing', # city comment
-	2: optional string code, // comment2
-	3: bool bigCity = 1,
-	4: i32 test = Sex.MALE
-}
-
-// struct Honor {
-// 	1: string date;
-// 	2: string content;
+// struct Address {
+// 	1: string city = 'beijing', # city comment
+// 	2: optional string code, // comment2
+// 	3: bool bigCity = 1,
+// 	4: i32 test = Sex.MALE
 // }
+
+struct Honor {
+	1: string date;
+	2: string content;
+}
 
 // struct Teacher {
 // 	1: i32 id;
 // 	2: string name;
+// }
+
+// union JavaObjectArg {
+//   1: i32 int_arg;
+//   2: i64 long_arg;
+//   3: string string_arg;
+//   4: bool bool_arg;
+//   5: binary binary_arg;
+//   6: double double_arg;
 // }

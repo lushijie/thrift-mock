@@ -4,4 +4,5 @@ module.exports = {
   exception: require('./processor/exception.js'),
   struct: require('./processor/struct.js'),
   typedef: require('./processor/typedef.js'),
+  union: require('./processor/union.js'),
 }

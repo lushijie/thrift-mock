@@ -1,0 +1,1 @@
+const struct = require('./struct.js');
