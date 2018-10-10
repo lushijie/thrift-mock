@@ -58,6 +58,6 @@ const myGen = Generator(STORE, {
   }
 });
 
-const res = myGen('Sex.MALE');
+const res = myGen('Sex');
 console.log(res);
 

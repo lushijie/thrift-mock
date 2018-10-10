@@ -1,26 +1,5 @@
-const RadomRule = require('./rules.js');
-const Utils = require('core-util-is');
-const ALL_TYPE = ['const', 'enum', 'exception', 'struct', 'typedef'];
-
-function findType(store = {}, name) {
-  console.log(store);
-  let matchedType = null;
-  ALL_TYPE.forEach(type => {
-    if (store[type][name] && !matchedType) {
-      matchedType = type;
-    }
-  });
-  return matchedType;
-}
-
-module.exports = function(store, mapKey) {
-  return function gen(name) {
-    const type = findType(store, name);
-    if (type === 'const') {
-      return store[type][name];
-    }
-
-    // if (type === 'struct') {
+module.exports = function(store, type, name) {
+  // if (type === 'struct') {
     //   const item = {};
     //   const syntax = store[type][name];
 
@@ -82,5 +61,4 @@ module.exports = function(store, mapKey) {
     //   });
     //   return item;
     // }
-  }
 }
