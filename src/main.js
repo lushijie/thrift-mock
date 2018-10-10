@@ -8,8 +8,8 @@ const fs = require('fs');
 const path = require('path');
 const Thriftrw = require('thriftrw').Thrift;
 const Parser = require('./parser');
-const RadomGen = require('./random/gen.js');
-const Utils = require('core-util-is');
+const Generator = require('./generator');
+const Utils = require('./utils');
 const source = fs.readFileSync(path.join(__dirname, 'thrift.idl'), 'ascii');
 
 // 数据存储
@@ -33,24 +33,24 @@ const thriftrw = new Thriftrw({
 function secondParser(store, thriftrw) {
   const ENTRY_POINT = thriftrw.entryPoint;
   const DEFINITIONS = thriftrw['asts'][ENTRY_POINT]['definitions'];
-  console.log('第一次解析:', JSON.stringify(DEFINITIONS));
+  // console.log('第一次解析:', JSON.stringify(DEFINITIONS));
 
   DEFINITIONS.forEach(ele => {
     const type = ele.type.toLowerCase();
     const fn = Parser[type];
-    if (Utils.isFunction(fn)) {
+    if (Utils.is.isFunction(fn)) {
       fn(ele, store[type]);
       return;
     }
     console.error(`${type} 类型解析器不存在`);
   });
-  console.log('第二次解析:', JSON.stringify(store, undefined, 2));
+  // console.log('第二次解析:', JSON.stringify(store, undefined, 2));
   return store;
 }
 secondParser(STORE, thriftrw);
 
 // 构造结构化的数据
-const myGen = RadomGen(STORE, {
+const myGen = Generator(STORE, {
   Address: {
     code() {
       return 'aaa';
@@ -58,6 +58,6 @@ const myGen = RadomGen(STORE, {
   }
 });
 
-const res = myGen('Year');
+const res = myGen('Sex.MALE');
 console.log(res);
 
