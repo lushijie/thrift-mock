@@ -6,22 +6,19 @@
  */
 const fs = require('fs');
 const path = require('path');
+const Utils = require('./utils');
 const Thriftrw = require('thriftrw').Thrift;
 const Parser = require('./parser');
 const Generator = require('./generator');
-const Utils = require('./utils');
+const ALL_THRIFT_TYPE = require('./constants/type');
 const source = fs.readFileSync(path.join(__dirname, 'thrift.idl'), 'ascii');
 
-// 数据存储
-const STORE = {
-  const: {},
-  enum: {},
-  exception: {},
-  struct: {},
-  typedef: {}
-};
+// 初始化数据存储
+const STORE = {};
+ALL_THRIFT_TYPE.forEach(type => {
+  STORE[type] = {};
+});
 
-// 第一次解析
 const thriftrw = new Thriftrw({
   source: source,
   strict: false,
@@ -29,13 +26,18 @@ const thriftrw = new Thriftrw({
   defaultAsUndefined: false
 }).toJSON();
 
-// 第二次解析
-function secondParser(store, thriftrw) {
+// 第一次解析
+function firstParse(thriftrw) {
   const ENTRY_POINT = thriftrw.entryPoint;
   const DEFINITIONS = thriftrw['asts'][ENTRY_POINT]['definitions'];
-  // console.log('第一次解析:', JSON.stringify(DEFINITIONS));
+  console.log('第一次解析:', JSON.stringify(DEFINITIONS));
+  return DEFINITIONS;
+}
 
-  DEFINITIONS.forEach(ele => {
+
+// 第二次解析
+function secondParse(store, thriftrw) {
+  firstParse(thriftrw).forEach(ele => {
     const type = ele.type.toLowerCase();
     const fn = Parser[type];
     if (Utils.is.isFunction(fn)) {
@@ -47,17 +49,17 @@ function secondParser(store, thriftrw) {
   // console.log('第二次解析:', JSON.stringify(store, undefined, 2));
   return store;
 }
-secondParser(STORE, thriftrw);
+secondParse(STORE, thriftrw);
 
-// 构造结构化的数据
-const myGen = Generator(STORE, {
-  Address: {
-    code() {
-      return 'aaa';
-    }
-  }
-});
+// // 构造结构化的数据
+// const myGen = Generator(STORE, {
+//   Address: {
+//     code() {
+//       return 'aaa';
+//     }
+//   }
+// });
 
-const res = myGen('Sex');
-console.log(res);
+// const res = myGen('Sex');
+// console.log(res);
 

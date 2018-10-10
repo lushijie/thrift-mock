@@ -1,4 +1,4 @@
-module.exports = function(ast, store) {
+module.exports = function(ast, store = {}) {
   const identifier = ast.id.name;
   store[identifier] = {};
   ast.definitions.forEach(ele => {
@@ -10,5 +10,6 @@ module.exports = function(ast, store) {
       value = ele.value.value;
     }
     store[identifier][key] = value;
-  })
+  });
+  return store;
 }

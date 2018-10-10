@@ -1,4 +1,4 @@
-module.exports = function(ast, store) {
+module.exports = function(ast, store = {}) {
   const identifier = ast.id.name;
 
   store[identifier] = {};
@@ -27,17 +27,18 @@ module.exports = function(ast, store) {
       }
     }
 
-    switch(ele.valueType.type) {
+    const eleValueType = ele.valueType;
+    switch(eleValueType.type) {
       case 'BaseType':
-        field.type = ele.valueType.baseType;
+        field.type = eleValueType.baseType;
       break;
 
       case 'Identifier':
-        field.refer = ele.valueType.name;
+        field.refer = eleValueType.name;
       break;
 
       case 'List':
-        let listChildValueType = ele.valueType.valueType;
+        let listChildValueType = eleValueType.valueType;
         if (listChildValueType.type === 'BaseType') {
           field.list = {
             type: listChildValueType.baseType
@@ -50,7 +51,7 @@ module.exports = function(ast, store) {
       break;
 
       case 'Set':
-        let setChildValueType = ele.valueType.valueType;
+        let setChildValueType = eleValueType.valueType;
         if (setChildValueType.type === 'BaseType') {
           field.set = {
             type: setChildValueType.baseType
@@ -63,8 +64,8 @@ module.exports = function(ast, store) {
       break;
 
       case 'Map':
-        let mapKey = ele.valueType.keyType;
-        let mapValue = ele.valueType.valueType;
+        let mapKey = eleValueType.keyType;
+        let mapValue = eleValueType.valueType;
         field.map = {};
 
         if (mapKey.type === 'BaseType') {
@@ -91,4 +92,6 @@ module.exports = function(ast, store) {
 
     store[identifier][key] = field;
   });
+
+  return store;
 }

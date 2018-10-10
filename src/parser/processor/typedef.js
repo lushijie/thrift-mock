@@ -1,4 +1,4 @@
-module.exports = function(ast, store) {
+module.exports = function(ast, store = {}) {
   const identifier = ast.id.name;
   store[identifier] = {};
 
@@ -74,4 +74,5 @@ module.exports = function(ast, store) {
   }
 
   store[identifier] = field;
+  return store;
 }

@@ -2,6 +2,8 @@ module.exports = [
   'const',
   'enum',
   'exception',
+  'service',
   'struct',
-  'typedef'
+  'typedef',
+  'union'
 ]

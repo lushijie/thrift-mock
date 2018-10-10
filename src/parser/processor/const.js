@@ -1,4 +1,4 @@
-module.exports = function(ast, store) {
+module.exports = function(ast, store = {}) {
   const identifier = ast.id.name;
 
   switch(ast.fieldType.type) {
@@ -23,4 +23,5 @@ module.exports = function(ast, store) {
       })
     break;
   }
+  return store;
 }
