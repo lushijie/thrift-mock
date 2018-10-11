@@ -27,6 +27,7 @@ function firstParse() {
   // console.log(JSON.stringify(DEFINITIONS));
   return DEFINITIONS;
 }
+firstParse();
 
 // 第二次解析
 function secondParse() {
@@ -44,15 +45,15 @@ function secondParse() {
   // console.log(JSON.stringify(STORE, undefined, 2))
 
   STORE = ThriftTool.resolveTypedef(STORE);
-  // console.log('--- 第三次解析结果 ---');
-  // console.log(JSON.stringify(STORE, undefined, 2))
+  console.log('--- 第三次解析结果 ---');
+  console.log(JSON.stringify(STORE, undefined, 2))
   return STORE;
 }
 const STORE = secondParse();
 
 
-// 构造结构化的数据
+// // 构造结构化的数据
 const gen = Generator(STORE);
-const res = gen('Teacher', gen);
+const res = gen('Service2', gen);
 console.log('--- 获得 JSON 格式 ---');
 console.log(JSON.stringify(res, undefined, 2))

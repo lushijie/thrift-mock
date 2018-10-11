@@ -28,11 +28,13 @@ module.exports = function(ast) {
 
     field.returns = ThriftTool.resolveMixType(ele.returns);
     field.arguments = Struct(ele)[key];
+
+    // warn
     field.throws = ele.throws && ele.throws.map(ele => {
       return {
         [ele.name]: ThriftTool.resolveMixType(ele.valueType)
       }
-    });
+    })[1]; // 0 为 success 结构
     store[identifier]['service'][key] = field;
   });
   return store;

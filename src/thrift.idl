@@ -50,12 +50,12 @@
 // struct Honor {
 // 	2: string content;
 // }
-typedef list<map<i32, string>> mylist
+// typedef list<map<i32, string>> mylist
 
-struct Teacher {
-	1: mylist id;
-	2: string name;
-}
+// struct Teacher {
+// 	1: mylist id;
+// 	2: string name;
+// }
 
 
 
@@ -91,10 +91,7 @@ struct Teacher {
 
 
 
-exception InvalidOperation {
-  1: i32 errno = 500,
-  2: string errmsg = "Server Error..."
-}
+
 
 // service MyService {
 //   void ping() throws (1:InvalidOperation ouch),
@@ -105,9 +102,9 @@ exception InvalidOperation {
 // }
 
 
-service Service1 {
-  void ping()
-}
+// service Service1 {
+//   void ping()
+// }
 
 // service Service2 extends Service1 {
 //   void ping2()
@@ -127,3 +124,20 @@ service Service1 {
 // struct Work {
 //   1: i32 w = CUT_TIME,
 // }
+
+exception InvalidOperation {
+  1: i32 errno = 500,
+  2: string errmsg = "Server Error..."
+}
+
+// struct Work {
+// 	1: required string bizCode;
+// }
+
+service Service1 {
+  list<i32> ping(1:i32 num1, 2:string num2) throws (1:InvalidOperation myerr)
+}
+
+service Service2 extends Service1 {
+  void ping2()
+}
