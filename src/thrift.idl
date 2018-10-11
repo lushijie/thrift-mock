@@ -51,10 +51,10 @@ struct Teacher {
 	2: string name;
 }
 
-struct Honor {
-	1: list<Teacher> a;
-	2: string content;
-}
+// struct Honor {
+// 	1: list<Teacher> a;
+// 	2: string content;
+// }
 
 
 // union JavaObjectArg {

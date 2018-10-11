@@ -19,23 +19,23 @@ module.exports = {
     return 8.88;
   },
   string(length = 7, charset) {
-    return randomString.generate({
-      length: length,
-      charset: charset
-    });
+    // return randomString.generate({
+    //   length: length,
+    //   charset: charset
+    // });
+    return 'string';
   },
+  // id() {
+  //   return 'id123';
+  // },
 
-  id() {
-    return 'id123';
-  },
+  // address() {
+  //   return {
+  //     a: 123,
+  //   }
+  // },
 
-  address() {
-    return {
-      a: 123,
-    }
-  },
-
-  code() {
-    return 'code123';
-  }
+  // code() {
+  //   return 'code123';
+  // }
 }

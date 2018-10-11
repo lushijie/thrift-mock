@@ -63,6 +63,6 @@ const Factory = Generator(STORE, {
   }
 });
 
-const res = Factory('Honor', Factory);
+const res = Factory('Teacher', Factory);
 console.log(res);
 

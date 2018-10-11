@@ -1,7 +1,6 @@
 const Radom = require('../../random');
-module.exports = function(store, name, mapKey, gen) {
+module.exports = function(syntax, gen, mapKey) {
   const res = {};
-  const syntax = store['struct'][name];
 
   Object.keys(syntax).forEach(key => {
     const valueStyle = syntax[key].valueStyle;

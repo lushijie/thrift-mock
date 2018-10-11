@@ -1,3 +1,3 @@
-module.exports = function(store, name) {
-  return store['enum'][name];
+module.exports = function(syntax) {
+  return syntax;
 }
