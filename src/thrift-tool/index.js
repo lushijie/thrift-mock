@@ -86,11 +86,13 @@ module.exports = {
       function fn(obj) {
         Object.keys(obj).forEach(key => {
           let ele = obj[key];
-          if (ele.valueStyle === 'identifier' && module.exports.findThriftType(store, ele.valueType) === 'typedef') {
+          // ele && 兼容 service baseService: null 的情况
+          if (ele && ele.valueStyle === 'identifier' && module.exports.findThriftType(store, ele.valueType) === 'typedef') {
             ele = Utils.extend(ele, store['typedef'][ele.valueType]);
           }
         });
       };
+
       Object.keys(store[type]).forEach(ele => {
         fn(store[type][ele]);
       });
