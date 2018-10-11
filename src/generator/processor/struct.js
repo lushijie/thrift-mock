@@ -1,4 +1,4 @@
-module.exports = function(store, type, name) {
+module.exports = function(store, name) {
   // if (type === 'struct') {
     //   const item = {};
     //   const syntax = store[type][name];

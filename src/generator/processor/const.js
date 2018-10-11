@@ -1,3 +1,3 @@
-module.exports = function(store, type, name) {
-  return store[type][name];
+module.exports = function(store, name) {
+  return store['const'][name];
 }

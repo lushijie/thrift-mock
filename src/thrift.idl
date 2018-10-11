@@ -1,13 +1,13 @@
 // const 基本类型 | 集合类型
-// const i32 CUT_TIME = 10;
-// const string B = 'sdf';
-// const list<string> Year = ['2012', '2013', '2014']
+const i32 CUT_TIME = 10;
+const string B = 'sdf';
+const list<string> Year = ['2012', '2013', '2014']
 
-// const map<string, list<i32>> FOOD_TYPE_MAP = {
-// 	'1': [1, 2],
-// 	'2': [2, 3]
-// }
-// const set<i32> Month = ['1', '2', '3']
+const map<string, list<i32>> FOOD_TYPE_MAP = {
+	'1': [1, 2],
+	'2': [2, 3]
+}
+const set<i32> Month = ['1', '2', '3']
 const list<list<string>> A = [['a'], ['b'], ['c']]
 
 // exception IException {

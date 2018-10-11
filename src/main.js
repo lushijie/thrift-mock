@@ -14,31 +14,30 @@ const ALL_THRIFT_TYPE = require('./constants/type');
 const source = fs.readFileSync(path.join(__dirname, 'thrift.idl'), 'ascii');
 
 // 初始化数据存储
-const STORE = {};
+let STORE = {};
 ALL_THRIFT_TYPE.forEach(type => {
   STORE[type] = {};
 });
 
-const thriftrw = new Thriftrw({
-  source: source,
-  strict: false,
-  allowOptionalArguments: true,
-  defaultAsUndefined: false
-}).toJSON();
-
 // 第一次解析
-function firstParse(thriftrw) {
+function firstParse() {
+  const thriftrw = new Thriftrw({
+    source: source,
+    strict: false,
+    allowOptionalArguments: true,
+    defaultAsUndefined: false
+  }).toJSON();
   const ENTRY_POINT = thriftrw.entryPoint;
   const DEFINITIONS = thriftrw['asts'][ENTRY_POINT]['definitions'];
   console.log('--- 第一次解析 ---');
   console.log(JSON.stringify(DEFINITIONS));
   return DEFINITIONS;
 }
-// firstParse(thriftrw);
 
 // 第二次解析
-function secondParse(store, thriftrw) {
-  firstParse(thriftrw).forEach(ele => {
+function secondParse() {
+  const store = {};
+  firstParse().forEach(ele => {
     const type = ele.type.toLowerCase();
     const fn = Parser[type];
     if (Utils.isFunction(fn)) {
@@ -47,12 +46,15 @@ function secondParse(store, thriftrw) {
     }
     console.error(`${type} 类型解析器不存在`);
   });
-  console.log('第二次解析:', JSON.stringify(store, undefined, 2));
   return store;
 }
-secondParse(STORE, thriftrw);
 
-// // 构造结构化的数据
+STORE = Utils.extend(STORE, secondParse());
+console.log('--- 第二次解析 ---');
+console.log(JSON.stringify(STORE, undefined, 2));
+
+
+// // // 构造结构化的数据
 // const myGen = Generator(STORE, {
 //   Address: {
 //     code() {
@@ -61,6 +63,6 @@ secondParse(STORE, thriftrw);
 //   }
 // });
 
-// const res = myGen('Sex');
+// const res = myGen('FOOD_TYPE_MAP');
 // console.log(res);
 
