@@ -42,7 +42,7 @@ function secondParse(store, thriftrw) {
     const type = ele.type.toLowerCase();
     const fn = Parser[type];
     if (Utils.isFunction(fn)) {
-      fn(ele, store[type]);
+      store[type] = Utils.extend(store[type], fn(ele));
       return;
     }
     console.error(`${type} 类型解析器不存在`);

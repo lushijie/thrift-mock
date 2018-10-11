@@ -1,10 +1,11 @@
 const Utils = require('@lushijie/utils');
 const Tool = require('../../tool');
 
-module.exports = function(ast, store = {}) {
+module.exports = function(ast) {
+  const store = {};
   const identifier = ast.id.name;
-
   store[identifier] = {};
+
   ast.fields.forEach(ele => {
     const key = ele.name;
     let field = {

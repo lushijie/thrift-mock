@@ -1,4 +1,5 @@
-module.exports = function(ast, store = {}) {
+module.exports = function(ast) {
+  const store = {};
   const identifier = ast.id.name;
   store[identifier] = {};
   ast.definitions.forEach(ele => {

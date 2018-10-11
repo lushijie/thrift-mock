@@ -8,7 +8,7 @@
 // 	'2': [2, 3]
 // }
 // const set<i32> Month = ['1', '2', '3']
-// const list<list<string>> A = [['a'], ['b'], ['c']]
+const list<list<string>> A = [['a'], ['b'], ['c']]
 
 // exception IException {
 //   1: i32 errno = 500,
@@ -121,5 +121,5 @@
 
 
 // struct Work {
-//   1: JavaObjectArg w,
+//   1: i32 w = CUT_TIME,
 // }
