@@ -12,7 +12,8 @@ module.exports = {
   },
 
   // 查找 thrift 类型
-  findThriftType(store = {}, name) {
+  findThriftType(store, name) {
+    store = Utils.extend({}, store);
     let matchedType = null;
     ALL_THRIFT_TYPE.forEach(type => {
       if (store[type][name] && !matchedType) {
@@ -79,6 +80,7 @@ module.exports = {
 
   // 将 typedef 替换
   resolveTypedef(store) {
+    store = Utils.extend({}, store);
     const replaceType= ['exception', 'struct', 'service'];
     replaceType.forEach(type => {
       function fn(obj) {

@@ -91,10 +91,10 @@ struct Teacher {
 
 
 
-// exception InvalidOperation {
-//   1: i32 errno = 500,
-//   2: string errmsg = "Server Error..."
-// }
+exception InvalidOperation {
+  1: i32 errno = 500,
+  2: string errmsg = "Server Error..."
+}
 
 // service MyService {
 //   void ping() throws (1:InvalidOperation ouch),
@@ -105,9 +105,9 @@ struct Teacher {
 // }
 
 
-// service Service1 {
-//   void ping()
-// }
+service Service1 {
+  void ping()
+}
 
 // service Service2 extends Service1 {
 //   void ping2()
