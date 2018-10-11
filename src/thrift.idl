@@ -130,13 +130,16 @@ exception InvalidOperation {
   2: string errmsg = "Server Error..."
 }
 
-// struct Work {
-// 	1: required string bizCode;
-// }
 
 service Service1 {
   list<i32> ping(1:i32 num1, 2:string num2) throws (1:InvalidOperation myerr)
 }
+
+
+// struct Work {
+// 	1: required string bizCode;
+// }
+
 
 service Service2 extends Service1 {
   void ping2()
