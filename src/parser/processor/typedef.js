@@ -1,7 +1,7 @@
-const Tool = require('../../tool');
+const ThriftTool = require('../../thrift-tool');
 module.exports = function(ast) {
   const store = {};
   const identifier = ast.id.name;
-  store[identifier] = Tool.resolveMixType(ast.valueType);
+  store[identifier] = ThriftTool.resolveMixType(ast.valueType);
   return store;
 }

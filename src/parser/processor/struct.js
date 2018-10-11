@@ -1,5 +1,5 @@
 const Utils = require('@lushijie/utils');
-const Tool = require('../../tool');
+const ThriftTool = require('../../thrift-tool');
 
 module.exports = function(ast) {
   const store = {};
@@ -17,10 +17,10 @@ module.exports = function(ast) {
 
     // 默认值，目前仅支持常量
     if (ele.defaultValue) {
-      field.defaultValue = Tool.resolveMixValue(ele.defaultValue);
+      field.defaultValue = ThriftTool.resolveMixValue(ele.defaultValue);
     }
 
-    field = Utils.extend(field, Tool.resolveMixType(ele.valueType));
+    field = Utils.extend(field, ThriftTool.resolveMixType(ele.valueType));
     store[identifier][key] = field;
   });
 

@@ -1,4 +1,4 @@
-const Tool = require('../../tool');
+const ThriftTool = require('../../thrift-tool');
 const Struct = require('./struct');
 module.exports = function(ast) {
   const store = {};
@@ -26,11 +26,11 @@ module.exports = function(ast) {
       oneway: ele.oneway,
     };
 
-    field.returns = Tool.resolveMixType(ele.returns);
+    field.returns = ThriftTool.resolveMixType(ele.returns);
     field.arguments = Struct(ele)[key];
     field.throws = ele.throws && ele.throws.map(ele => {
       return {
-        [ele.name]: Tool.resolveMixType(ele.valueType)
+        [ele.name]: ThriftTool.resolveMixType(ele.valueType)
       }
     });
     store[identifier]['service'][key] = field;

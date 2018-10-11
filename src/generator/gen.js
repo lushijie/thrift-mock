@@ -1,11 +1,11 @@
 const Utils = require('@lushijie/utils');
-const Tool = require('../tool');
+const ThriftTool = require('../thrift-tool');
 const Processor = require('./');
 
-module.exports = function(store, mapKey) {
+module.exports = function(store, mapKey = {}) {
   store = Utils.extend({}, store);
   return function (name, gen) {
-    const type = Tool.findThriftType(store, name);
+    const type = ThriftTool.findThriftType(store, name);
     if (type) {
       return Processor[type](store[type][name], gen, mapKey);
     }

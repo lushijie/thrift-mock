@@ -1,6 +1,13 @@
-const ALL_TYPE = require('../constants/type');
+const ALL_THRIFT_TYPE = require('../constants/type');
 
 module.exports = {
+  createStore() {
+    const store = {};
+    ALL_THRIFT_TYPE.forEach(type => {
+      store[type] = {};
+    });
+    return store;
+  },
   findThriftType(store = {}, name) {
     let matchedType = null;
     ALL_TYPE.forEach(type => {

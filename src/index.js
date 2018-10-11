@@ -7,18 +7,14 @@
 const fs = require('fs');
 const path = require('path');
 const Utils = require('@lushijie/utils');
+const ThriftTool = require('./thrift-tool');
 const Thriftrw = require('thriftrw').Thrift;
 const Parser = require('./parser');
 const Generator = require('./generator/gen');
-const ALL_THRIFT_TYPE = require('./constants/type');
 const source = fs.readFileSync(path.join(__dirname, 'thrift.idl'), 'ascii');
 
 // 初始化数据存储
-let STORE = {};
-ALL_THRIFT_TYPE.forEach(type => {
-  STORE[type] = {};
-});
-
+let STORE = ThriftTool.createStore();
 // 第一次解析
 function firstParse() {
   const thriftrw = new Thriftrw({
@@ -29,8 +25,8 @@ function firstParse() {
   }).toJSON();
   const ENTRY_POINT = thriftrw.entryPoint;
   const DEFINITIONS = thriftrw['asts'][ENTRY_POINT]['definitions'];
-  console.log('--- 第一次解析 ---');
-  console.log(JSON.stringify(DEFINITIONS));
+  // console.log('--- 第一次解析结果 ---');
+  // console.log(JSON.stringify(DEFINITIONS));
   return DEFINITIONS;
 }
 
@@ -50,19 +46,10 @@ function secondParse() {
 }
 
 STORE = Utils.extend(STORE, secondParse());
-console.log('--- 第二次解析 ---');
-console.log(JSON.stringify(STORE, undefined, 2));
-
+// console.log('--- 第二次解析结果 ---');
+// console.log(JSON.stringify(STORE, undefined, 2));
 
 // 构造结构化的数据
-const Factory = Generator(STORE, {
-  Address: {
-    code() {
-      return 'aaa';
-    }
-  }
-});
-
-const res = Factory('Teacher', Factory);
-console.log(res);
-
+const Factory = Generator(STORE);
+const res = Factory('DishesCO', Factory);
+console.log(JSON.stringify(res, undefined, 2))

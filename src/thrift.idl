@@ -46,10 +46,10 @@
 // 	4: i32 test = Sex.MALE
 // }
 
-struct Teacher {
-	1: i32 id;
-	2: string name;
-}
+// struct Teacher {
+// 	1: i32 id;
+// 	2: string name;
+// }
 
 // struct Honor {
 // 	1: list<Teacher> a;
@@ -124,3 +124,139 @@ struct Teacher {
 // struct Work {
 //   1: i32 w = CUT_TIME,
 // }
+
+
+struct MenuInfoRequest {
+  1: required string bizCode;
+  2: required i32 bizType;
+  3:  string restaurantId;
+}
+struct MenuInfo {
+  1: required bool success;
+  2: required string errMsg;
+  3: required i32 code;
+  4:  list<DishesTypeCO> dishesTypes;
+  5:  map<string, list<DishesCO>> typeIdDishesPair;
+}
+/**
+     * typeId 菜品品类id
+     * typeName 菜品品类名称
+     */
+struct DishesTypeCO {
+  1:  string typeId;
+  2:  string typeName;
+}
+/**
+     * id 比如当前属性是做法：id就是做法id
+     * name 比如当前属性是做法： name是做法的名称
+     * price 价格相关
+     * vipPrice ExtAttrType取规格NORM种类时，才有vip价格
+     * priceWay 价格方式：0，不加价    1：比例加价，此时price为1-100整数，需要额外加的金额为菜品单价*price/100  2：固定价格
+     * isDefault 是否默认 1:是 0:否
+     * repertory 库存 「-1 无限库存」
+     */
+struct DishesExtDetailCO {
+  1:  string id;
+  2:  string name;
+  3:  string price;
+  4:  string vipPrice;
+  5:  i32 priceWay;
+  6:  i32 isDefault;
+  7:  i32 repertory;
+}
+/**
+     * id 当前属性类别的分类id
+     * hotelId 分类餐厅Id
+     * categoryName 分类名称
+     * sort 排序顺序,正整数,按数字从小到大排序
+     * selectFlag 做法分类选择方式1-单选，2-多选
+     * dishesExtDetails 菜品扩展属性具体信息
+     */
+struct DishesExtCO {
+  1:  string id;
+  2:  string restaurantId;
+  3:  string categoryName;
+  4:  i32 sort;
+  5:  i32 selectFlag;
+  6:  list<DishesExtDetailCO> dishesExtDetails;
+}
+/**
+     * id 菜品id
+     * defaultFood是否默认菜品 1：是  0： 不是
+     * count 菜品数量
+     * name 名称
+     * isRepeatable 是否重复
+     * chooseFoodId 可替换菜品id
+     * price 价格
+     * typeDishesExtPair 菜品扩展属性 1加料信息、2做法信息、3规格信息
+     *      规格 price vipPrice 无 priceWay
+     *   		做法  price priceWay
+     *   		加料  price priceWay  repertory
+     */
+struct ComboCO {
+  1:  string id;
+  2:  i32 defaultFood;
+  3:  i32 count;
+  4:  string name;
+  5:  i32 isRepeatable;
+  6:  string chooseFoodId;
+  7:  string price;
+  8:  map<i32, list<DishesExtCO>> typeDishesExtPair;
+}
+/**
+     * id 套餐id
+     * groupName 套餐组的名字
+     * isRepeatable 是否重复选
+     * count 菜品数量
+     * price 价格
+     * name 套餐名称
+     * comboList 套餐中的菜品
+     * typeDishesExtPair 菜品扩展属性 1加料信息、2做法信息、3规格信息
+     */
+struct DishesComboCO {
+  1:  string id;
+  2:  string groupName;
+  3:  i32 isRepeatable;
+  4:  i32 count;
+  5:  double price;
+  6:  string name;
+  7:  list<ComboCO> comboList;
+  8:  map<i32, list<DishesExtCO>> typeDishesExtPair;
+}
+/**
+     * dishesId 菜品id
+     * dishesName 菜品名称
+     * dishIntro 菜品简介
+     * dishesPrice 菜品价格
+     * dishesVipPrice 菜品会员价格
+     * dishesImage 菜品图片
+     * season 是否时价菜  0: 否   1：是
+     * weigh 是否称重菜  0：否  1：是
+     * dishesUnit 菜品单位
+     * minCount 最小起售份数
+     * necessary 是否必选菜, true：必选  false：不是必选
+     * dishesType 菜品类别信息
+     * typeDishesExtPair 菜品扩展属性 1加料信息、2做法信息、3规格信息
+     * dishesComboList 备选套餐列表
+     * repertory 库存 「-1 无限库存」
+     * 原逻辑：「enable 是否使用估清信息，1：是， 0：否
+     * sum 字段enable为1前提下的剩余库存」
+     */
+
+struct DishesCO {
+  1:  string dishesId;
+  2:  string dishesName;
+  3:  string dishesSummary;
+  4:  string dishesPrice;
+  5:  string dishesVipPrice;
+  6:  string dishesImage;
+  7:  i32 season;
+  8:  string weigh;
+  9:  string dishesUnit;
+  10:  i32 minCount;
+  11:  bool necessary;
+  12:  DishesTypeCO dishesType;
+  13:  map<i32, list<DishesExtCO>> typeDishesExtPair;
+  14:  list<DishesComboCO> dishesComboList;
+  15:  i32 repertory;
+}

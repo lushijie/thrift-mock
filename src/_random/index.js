@@ -1,7 +1,7 @@
 const randomString = require("randomstring");
 module.exports = {
   bool() {
-    return Math.random() >= 0.5;
+    return true;
   },
   byte() {
 

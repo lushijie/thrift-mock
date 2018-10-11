@@ -1,4 +1,3 @@
-const Radom = require('../../random');
 module.exports = function(syntax, gen, mapKey) {
   const res = {};
 
@@ -9,11 +8,11 @@ module.exports = function(syntax, gen, mapKey) {
 
     function fn({valueStyle, valueType, keyType}) {
       if (valueStyle === 'basetype') {
-        return Radom[valueType]();
+        return valueType; // random position
       }
 
       if (valueStyle === 'identifier') {
-        return gen(valueType);
+        return gen(valueType, gen);
       }
 
       if (valueStyle === 'list' || valueStyle === 'set') {
