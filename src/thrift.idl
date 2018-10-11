@@ -71,19 +71,19 @@
 //   2: optional i32    poiId;
 // }
 
-// struct Work {
-//   1: i32 w,
-// }
+struct Work {
+  1: i32 w,
+}
 
-// struct User {
-//   1: i32 id = [{"a": 123}],
-//   2: map<i32, Work> b,
-//   4: Work id4,
-//   2: list<i32> id2,
-//   3: list<set<i32>> id3,
-//   5: list<Work> id5,
-//   6: list<set<Work>> id6,
-// }
+struct User {
+  1: i32 id = [{"a": 123}],
+  2: map<i32, Work> b,
+  4: Work id4,
+  // 2: list<i32> id2,
+  // 3: list<set<i32>> id3,
+  // 5: list<Work> id5,
+  // 6: list<set<Work>> id6,
+}
 
 
 
@@ -101,6 +101,12 @@
 // }
 
 
+service Service1 {
+  void ping()
+}
 
+service Service2 extends Service1 {
+  void ping2()
+}
 
 

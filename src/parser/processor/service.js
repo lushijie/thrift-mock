@@ -4,9 +4,17 @@ module.exports = function(ast, store = {}) {
   const identifier = ast.id.name;
 
   store[identifier] = {
-    baseService: ast.baseService,
+    baseService: null,
     service: {},
   };
+
+  // 与 Struct 结构保持统一
+  if (ast.baseService) {
+    store[identifier].baseService = {
+      valueStyle: ast.baseService.type.toLowerCase(),
+      valueType: ast.baseService.name
+    }
+  }
 
   ast.functions.forEach(ele => {
     const key = ele.id.name;
