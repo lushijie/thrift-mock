@@ -36,7 +36,6 @@ function firstParse(thriftrw) {
 }
 // firstParse(thriftrw);
 
-
 // 第二次解析
 function secondParse(store, thriftrw) {
   firstParse(thriftrw).forEach(ele => {
