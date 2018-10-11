@@ -12,7 +12,6 @@ const Parser = require('./parser');
 const Generator = require('./generator/gen');
 const source = fs.readFileSync(path.join(__dirname, 'thrift.idl'), 'ascii');
 const ThriftTool = require('./thrift-tool');
-let STORE = require('./constants/store');
 
 // 第一次解析
 function firstParse() {
@@ -31,25 +30,25 @@ function firstParse() {
 
 // 第二次解析
 function secondParse() {
-  const store = {};
+  let STORE = ThriftTool.createStore();
   firstParse().forEach(ele => {
     const type = ele.type.toLowerCase();
     const fn = Parser[type];
     if (Utils.isFunction(fn)) {
-      store[type] = Utils.extend(store[type], fn(ele));
+      STORE[type] = Utils.extend(STORE[type], fn(ele));
       return;
     }
     throw new Error(`${type} 类型解析器不存在`);
   });
-  return store;
+  STORE = ThriftTool.resolveTypedef(STORE);
+  return STORE;
 }
-
-STORE = Utils.extend(STORE, secondParse());
-console.log('--- 第二次解析结果 ---');
-STORE = ThriftTool.resolveTypedef(STORE);
-console.log('--- 第三次解析结果 ---');
+const STORE = secondParse();
+// console.log('--- 第二次解析结果 ---');
+// console.log(JSON.stringify(DEFINITIONS));
 
 // 构造结构化的数据
 const gen = Generator(STORE);
 const res = gen('Teacher', gen);
-console.log('res=', JSON.stringify(res, undefined, 2))
+console.log('--- JSON 格式 ---');
+console.log(JSON.stringify(res, undefined, 2))
