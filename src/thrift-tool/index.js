@@ -1,6 +1,8 @@
+const Utils = require('@lushijie/utils');
 const ALL_THRIFT_TYPE = require('../constants/type');
 
 module.exports = {
+  // 创建存储空间
   createStore() {
     const store = {};
     ALL_THRIFT_TYPE.forEach(type => {
@@ -8,9 +10,11 @@ module.exports = {
     });
     return store;
   },
+
+  // 查找 thrift 类型
   findThriftType(store = {}, name) {
     let matchedType = null;
-    ALL_TYPE.forEach(type => {
+    ALL_THRIFT_TYPE.forEach(type => {
       if (store[type][name] && !matchedType) {
         matchedType = type;
       }
@@ -71,5 +75,24 @@ module.exports = {
         }
       });
     }
+  },
+
+  // 将 typedef 替换
+  resolveTypedef(store) {
+    const replaceType= ['exception', 'struct', 'service'];
+    replaceType.forEach(type => {
+      function fn(obj) {
+        Object.keys(obj).forEach(key => {
+          let ele = obj[key];
+          if (ele.valueStyle === 'identifier' && module.exports.findThriftType(store, ele.valueType) === 'typedef') {
+            ele = Utils.extend(ele, store['typedef'][ele.valueType]);
+          }
+        });
+      };
+      Object.keys(store[type]).forEach(ele => {
+        fn(store[type][ele]);
+      });
+    });
+    return store;
   }
 }

@@ -7,14 +7,13 @@
 const fs = require('fs');
 const path = require('path');
 const Utils = require('@lushijie/utils');
-const ThriftTool = require('./thrift-tool');
 const Thriftrw = require('thriftrw').Thrift;
 const Parser = require('./parser');
 const Generator = require('./generator/gen');
 const source = fs.readFileSync(path.join(__dirname, 'thrift.idl'), 'ascii');
+const ThriftTool = require('./thrift-tool');
+let STORE = require('./constants/store');
 
-// 初始化数据存储
-let STORE = ThriftTool.createStore();
 // 第一次解析
 function firstParse() {
   const thriftrw = new Thriftrw({
@@ -40,16 +39,17 @@ function secondParse() {
       store[type] = Utils.extend(store[type], fn(ele));
       return;
     }
-    console.error(`${type} 类型解析器不存在`);
+    throw new Error(`${type} 类型解析器不存在`);
   });
   return store;
 }
 
 STORE = Utils.extend(STORE, secondParse());
-// console.log('--- 第二次解析结果 ---');
-// console.log(JSON.stringify(STORE, undefined, 2));
+console.log('--- 第二次解析结果 ---');
+STORE = ThriftTool.resolveTypedef(STORE);
+console.log('--- 第三次解析结果 ---');
 
 // 构造结构化的数据
-const Factory = Generator(STORE);
-const res = Factory('DishesCO', Factory);
-console.log(JSON.stringify(res, undefined, 2))
+const gen = Generator(STORE);
+const res = gen('Teacher', gen);
+console.log('res=', JSON.stringify(res, undefined, 2))

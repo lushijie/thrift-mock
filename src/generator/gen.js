@@ -7,8 +7,18 @@ module.exports = function(store, mapKey = {}) {
   return function (name, gen) {
     const type = ThriftTool.findThriftType(store, name);
     if (type) {
-      return Processor[type](store[type][name], gen, mapKey);
+      if (Utils.isFunction(Processor[type])) {
+        // return Processor[type](store[type][name], gen, mapKey);
+        return Processor[type]({
+          type,
+          name,
+          syntax: store[type][name],
+          gen,
+          mapKey
+        });
+      }
+      throw new Error(`${type} 类型构造器不存在`);
     }
-    throw new Error(`未在 thrift 类型中找到: ${name}`)
+    throw new Error(`${name} 未在 thrift 定义中找到`);
   }
 }

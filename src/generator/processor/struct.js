@@ -1,4 +1,6 @@
-module.exports = function(syntax, gen, mapKey) {
+const ThriftTool = require('../../thrift-tool');
+
+module.exports = function structGen({syntax, gen, mapKey, type}) {
   const res = {};
 
   Object.keys(syntax).forEach(key => {

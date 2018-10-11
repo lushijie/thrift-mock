@@ -1,3 +1,3 @@
-module.exports = function(syntax) {
+module.exports = function({syntax}) {
   return syntax;
 }
