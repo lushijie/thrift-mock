@@ -9,7 +9,7 @@ const path = require('path');
 const Utils = require('@lushijie/utils');
 const Thriftrw = require('thriftrw').Thrift;
 const Parser = require('./parser');
-const Generator = require('./generator');
+const Generator = require('./generator/gen');
 const ALL_THRIFT_TYPE = require('./constants/type');
 const source = fs.readFileSync(path.join(__dirname, 'thrift.idl'), 'ascii');
 
@@ -54,15 +54,15 @@ console.log('--- 第二次解析 ---');
 console.log(JSON.stringify(STORE, undefined, 2));
 
 
-// // // 构造结构化的数据
-// const myGen = Generator(STORE, {
-//   Address: {
-//     code() {
-//       return 'aaa';
-//     }
-//   }
-// });
+// 构造结构化的数据
+const Factory = Generator(STORE, {
+  Address: {
+    code() {
+      return 'aaa';
+    }
+  }
+});
 
-// const res = myGen('FOOD_TYPE_MAP');
-// console.log(res);
+const res = Factory('Honor', Factory);
+console.log(res);
 

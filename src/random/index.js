@@ -7,13 +7,13 @@ module.exports = {
 
   },
   i16(min = 1, max = 9007199254740992) {
-    return 666;
+    return 16;
   },
   i32(min, max) {
-    return module.exports.i16(min, max);
+    return 32;
   },
   i64(min, max) {
-    return module.exports.i16(min, max);
+    return 64;
   },
   double(min = 0, max = 9007199254740992) {
     return 8.88;
