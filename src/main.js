@@ -30,9 +30,11 @@ const thriftrw = new Thriftrw({
 function firstParse(thriftrw) {
   const ENTRY_POINT = thriftrw.entryPoint;
   const DEFINITIONS = thriftrw['asts'][ENTRY_POINT]['definitions'];
-  console.log('第一次解析:', JSON.stringify(DEFINITIONS));
+  console.log('--- 第一次解析 ---');
+  console.log(JSON.stringify(DEFINITIONS));
   return DEFINITIONS;
 }
+// firstParse(thriftrw);
 
 
 // 第二次解析
@@ -46,7 +48,7 @@ function secondParse(store, thriftrw) {
     }
     console.error(`${type} 类型解析器不存在`);
   });
-  // console.log('第二次解析:', JSON.stringify(store, undefined, 2));
+  console.log('第二次解析:', JSON.stringify(store, undefined, 2));
   return store;
 }
 secondParse(STORE, thriftrw);

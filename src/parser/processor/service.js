@@ -1,45 +1,30 @@
-const struct = require('./struct');
-
-function mixTypeResolve() {
-
-}
-
+const Tool = require('../../tool');
+const Struct = require('./struct');
 module.exports = function(ast, store = {}) {
   const identifier = ast.id.name;
 
-  store[identifier] = {};
+  store[identifier] = {
+    baseService: ast.baseService,
+    service: {},
+  };
+
   ast.functions.forEach(ele => {
     const key = ele.id.name;
     const field = {
-      oneway: false,
+      arguments: null,
       returns: null,
       throws: null,
-      arguments: null
+      oneway: ele.oneway,
     };
 
-    if (ele.returns.type === 'BaseType') {
-      if (ele.returns.baseType !== 'void') {
-        field.returns = {
-          type: ele.returns.baseType
-        }
+    field.returns = Tool.resolveMixType(ele.returns);
+    field.arguments = Struct(ele)[key];
+    field.throws = ele.throws && ele.throws.map(ele => {
+      return {
+        [ele.name]: Tool.resolveMixType(ele.valueType)
       }
-    }
-
-    store[identifier][key] = field;
-    // ele.returns
-
-    // ele.throws.forEach(t => {
-    //   field.throws[t.name] = struct({
-    //     id: {
-    //       name: t.name,
-    //     },
-    //     fields: [t]
-    //   })[t.name][t.name];
-    // });
-    // console.log(field.throws)
+    });
+    store[identifier]['service'][key] = field;
   });
-
-  console.log(JSON.stringify(store, undefined, 2));
-
   return store;
 }

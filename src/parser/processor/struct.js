@@ -8,27 +8,15 @@ module.exports = function(ast, store = {}) {
   ast.fields.forEach(ele => {
     const key = ele.name;
     let field = {
-      refer: null,
-      type: null,
+      valueType: null,
       defaultValue: null,
       optional: ele.optional,
       required: ele.required,
-      list: null,
-      map: null,
-      set: null
     }
 
-    // 默认值
+    // 默认值，目前仅支持常量
     if (ele.defaultValue) {
-      if (ele.defaultValue.value) {
-        field.defaultValue = {
-          value: ele.defaultValue.value
-        }
-      } else if (ele.defaultValue.type === 'Identifier') {
-        field.defaultValue = {
-          refer: ele.defaultValue.name
-        }
-      }
+      field.defaultValue = Tool.resolveMixValue(ele.defaultValue);
     }
 
     field = Utils.extend(field, Tool.resolveMixType(ele.valueType));
