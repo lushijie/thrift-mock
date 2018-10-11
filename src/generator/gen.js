@@ -8,9 +8,7 @@ module.exports = function(store, mapKey = {}) {
     const type = ThriftTool.findThriftType(store, name);
     if (type) {
       if (Utils.isFunction(Processor[type])) {
-        // return Processor[type](store[type][name], gen, mapKey);
         return Processor[type]({
-          type,
           name,
           syntax: store[type][name],
           gen,
