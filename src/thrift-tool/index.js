@@ -2,7 +2,6 @@ const Utils = require('@lushijie/utils');
 const ALL_THRIFT_TYPE = require('../constants/type');
 const GenProcessor = require('../generator');
 let STORE = null;
-let MAP_KEY = null;
 
 module.exports = {
   // 创建存储空间
