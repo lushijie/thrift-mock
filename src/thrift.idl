@@ -24,7 +24,7 @@
 // const MyInteger C = 123;
 
 union ARG {
-  1: i32 int_arg;
+  1: list<i32> int_arg;
   2: i64 long_arg;
 }
 

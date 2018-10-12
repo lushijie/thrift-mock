@@ -1,21 +1,28 @@
 const Utils = require('@lushijie/utils');
 const ALL_THRIFT_TYPE = require('../constants/type');
 const GenProcessor = require('../generator');
+let STORE = null;
+let MAP_KEY = null;
 
 module.exports = {
   // 创建存储空间
   createStore() {
-    const store = {};
+    STORE = {};
     ALL_THRIFT_TYPE.forEach(type => {
-      store[type] = {};
+      STORE[type] = {};
     });
-    return store;
+    return STORE;
   },
 
-  createJSON(store, mapKey = {}) {
-    store = Utils.extend({}, store);
+  // 获取存储空间
+  getStore() {
+    return STORE;
+  },
+
+  createJSON() {
+    const store = module.exports.getStore();
     return function gen(name) {
-      const type = module.exports.findThriftType(store, name);
+      const type = module.exports.findThriftType(name);
       if (type) {
         const fn = GenProcessor[type];
         if (Utils.isFunction(fn)) {
@@ -23,7 +30,6 @@ module.exports = {
             name,
             syntax: store[type][name],
             gen,
-            mapKey
           });
         }
         throw new Error(`${type} 类型构造器不存在`);
@@ -33,8 +39,8 @@ module.exports = {
   },
 
   // 查找 thrift 类型
-  findThriftType(store, name) {
-    store = Utils.extend({}, store);
+  findThriftType(name) {
+    const store = module.exports.getStore();
     let matchedType = null;
     ALL_THRIFT_TYPE.forEach(type => {
       if (store[type][name] && !matchedType) {
@@ -100,15 +106,18 @@ module.exports = {
   },
 
   // 将 typedef 替换
-  resolveTypedef(store) {
-    store = Utils.extend({}, store);
+  resolveTypedef() {
+    const store = module.exports.getStore();
     const replaceType= ['exception', 'struct', 'service'];
     replaceType.forEach(type => {
       function fn(obj) {
         Object.keys(obj).forEach(key => {
           let ele = obj[key];
-          // ele && 兼容 service baseService: null 的情况
-          if (ele && ele.valueStyle === 'identifier' && module.exports.findThriftType(store, ele.valueType) === 'typedef') {
+          if (
+            ele &&  // 兼容 service baseService: null 的情况
+            ele.valueStyle === 'identifier' &&
+            module.exports.findThriftType(ele.valueType) === 'typedef'
+          ) {
             ele = Utils.extend(ele, store['typedef'][ele.valueType]);
           }
         });
@@ -118,23 +127,42 @@ module.exports = {
         fn(store[type][ele]);
       });
     });
-    return store;
   },
 
-  resolveUnion(store) {
-    store = Utils.extend({}, store);
+  // Union 类型解析
+  resolveUnion(gen) {
+    const store = module.exports.getStore();
+    const theUnion = store['union'];
+
+    Object.keys(theUnion).map(name => {
+      Object.keys(theUnion[name]).forEach(key => {
+        theUnion[name][key] = GenProcessor['struct']({
+          syntax: {
+            [key]: theUnion[name][key]
+          },
+          gen
+        })[key];
+      });
+    });
+
     const replaceType= ['exception', 'struct', 'service'];
     replaceType.forEach(type => {
       function fn(obj) {
         Object.keys(obj).forEach(key => {
           let ele = obj[key];
-          // ele && 兼容 service baseService: null 的情况
-          if (ele && ele.valueStyle === 'identifier' && module.exports.findThriftType(store, ele.valueType) === 'union') {
+          if (
+            ele && // 兼容 service baseService: null 的情况
+            ele.valueStyle === 'identifier' &&
+            module.exports.findThriftType(ele.valueType) === 'union'
+          ) {
             const theUnion = store['union'][ele.valueType]
             ele = Utils.extend(ele, {
-              valueStyle: 'basetype',
+              valueStyle: 'union',
               valueType: Object.keys(theUnion).map(key => {
-                return theUnion[key].valueType;
+                if (!Utils.isString(theUnion[key])) {
+                  return JSON.stringify(theUnion[key]);
+                }
+                return theUnion[key]
               }).join('|'),
               union: true,
             });
@@ -146,6 +174,5 @@ module.exports = {
         fn(store[type][ele]);
       });
     });
-    return store;
   }
 }

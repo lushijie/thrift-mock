@@ -4,4 +4,5 @@ module.exports = {
   exception: require('./processor/exception'),
   service: require('./processor/service'),
   struct: require('./processor/struct'),
+  union: require('./processor/union'),
 }

@@ -11,6 +11,7 @@ const Thriftrw = require('thriftrw').Thrift;
 const Parser = require('./parser');
 const source = fs.readFileSync(path.join(__dirname, 'thrift.idl'), 'ascii');
 const ThriftTool = require('./thrift-tool');
+let STORE = ThriftTool.createStore();
 
 // 第一次解析
 function firstParse() {
@@ -23,7 +24,7 @@ function firstParse() {
     }).toJSON();
     const ENTRY_POINT = thriftrw.entryPoint;
     const DEFINITIONS = thriftrw['asts'][ENTRY_POINT]['definitions'];
-    // console.log('--- 第一次解析结果 ---');
+    // console.log('--- 第一次解析 thriftrw 结果 ---');
     // console.log(JSON.stringify(DEFINITIONS));
     return DEFINITIONS;
   } catch(e) {
@@ -33,7 +34,6 @@ function firstParse() {
 
 // 第二次解析
 function secondParse() {
-  let STORE = ThriftTool.createStore();
   firstParse().forEach(ele => {
     const type = ele.type.toLowerCase();
     const fn = Parser[type];
@@ -44,19 +44,23 @@ function secondParse() {
     throw new Error(`${type} 类型解析器不存在`);
   });
 
-  // console.log('--- 第二次解析结果 ---');
-  // console.log(JSON.stringify(STORE, undefined, 2))
-
-  STORE = ThriftTool.resolveTypedef(STORE);
-  STORE = ThriftTool.resolveUnion(STORE);
-  console.log('--- 第三次解析结果 ---');
+  console.log('--- 第二次解析 own 结果 ---');
   console.log(JSON.stringify(STORE, undefined, 2))
-  return STORE;
-}
-const STORE = secondParse();
 
-// // 构造结构化的数据
-const gen = ThriftTool.createJSON(STORE);
+  console.log('--- 第三次解析 resolveTypedef 结果 ---');
+  ThriftTool.resolveTypedef();
+  console.log(JSON.stringify(STORE, undefined, 2));
+
+
+  console.log('--- 第四次解析 resolveUnion 结果---');
+  ThriftTool.resolveUnion(ThriftTool.createJSON(STORE));
+  console.log(JSON.stringify(STORE, undefined, 2));
+}
+
+secondParse();
+
+// 构造结构化的数据
+let gen = ThriftTool.createJSON(STORE);
 const res = gen('Honor2');
 console.log('--- 获得 JSON 格式 ---');
 console.log(JSON.stringify(res, undefined, 2))

@@ -1,4 +1,4 @@
-module.exports = function structGen({syntax, gen, mapKey}) {
+module.exports = function structGen({syntax, gen}) {
   const res = {};
 
   Object.keys(syntax).forEach(key => {
@@ -12,7 +12,7 @@ module.exports = function structGen({syntax, gen, mapKey}) {
     } = theSyntax;
 
     function fn({valueStyle, valueType, keyType = null}) {
-      if (valueStyle === 'basetype') {
+      if (valueStyle === 'basetype' || valueStyle === 'union') {
         return `${required ? '★ ' : ''}${optional ? '☆ ' : ''}${valueType}`; // random position
       }
 

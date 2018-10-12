@@ -1,12 +1,12 @@
 module.exports = function(ast) {
   const identifier = ast.id.name;
-  const store = {
+  const res = {
     [identifier]: {}
   };
 
   ast.definitions.forEach(ele => {
     const key = ele.id.name;
-    store[identifier][key] = ele.value === null ? key : ele.value.value;
+    res[identifier][key] = ele.value === null ? key : ele.value.value;
   });
-  return store;
+  return res;
 }

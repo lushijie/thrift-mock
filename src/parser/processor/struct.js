@@ -2,9 +2,9 @@ const Utils = require('@lushijie/utils');
 const ThriftTool = require('../../thrift-tool');
 
 module.exports = function(ast) {
-  const store = {};
+  const res = {};
   const identifier = ast.id.name;
-  store[identifier] = {};
+  res[identifier] = {};
 
   ast.fields.forEach(ele => {
     const key = ele.name;
@@ -21,8 +21,8 @@ module.exports = function(ast) {
     }
 
     field = Utils.extend(field, ThriftTool.resolveMixType(ele.valueType));
-    store[identifier][key] = field;
+    res[identifier][key] = field;
   });
 
-  return store;
+  return res;
 }

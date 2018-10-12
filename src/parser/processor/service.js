@@ -1,17 +1,17 @@
 const ThriftTool = require('../../thrift-tool');
 const Struct = require('./struct');
 module.exports = function(ast) {
-  const store = {};
+  const res = {};
   const identifier = ast.id.name;
 
-  store[identifier] = {
+  res[identifier] = {
     baseService: null,
     service: {},
   };
 
   // 与 Struct 结构保持统一
   if (ast.baseService) {
-    store[identifier].baseService = {
+    res[identifier].baseService = {
       valueStyle: ast.baseService.type.toLowerCase(),
       valueType: ast.baseService.name
     }
@@ -35,7 +35,7 @@ module.exports = function(ast) {
         [ele.name]: ThriftTool.resolveMixType(ele.valueType)
       }
     })[1]; // 0 为 success 结构
-    store[identifier]['service'][key] = field;
+    res[identifier]['service'][key] = field;
   });
-  return store;
+  return res;
 }
