@@ -7,7 +7,7 @@
 const fs = require('fs');
 const path = require('path');
 const ThriftTool = require('./thrift-tool');
-const source = fs.readFileSync(path.join(__dirname, 'thrift.idl'), 'ascii');
-const thriftTool = new ThriftTool();
+const tt = new ThriftTool();
 
-thriftTool.parse(source, 'DishesCO');
+const source = fs.readFileSync(path.join(__dirname, 'thrift.idl'), 'ascii');
+tt.parse(source, 'DishesCO');
