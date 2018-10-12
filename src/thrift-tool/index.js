@@ -135,7 +135,7 @@ module.exports = {
               valueStyle: 'basetype',
               valueType: Object.keys(theUnion).map(key => {
                 return theUnion[key].valueType;
-              }).join(';'),
+              }).join('|'),
               union: true,
             });
           }
