@@ -1,6 +1,5 @@
-const ThriftTool = require('../../thrift-tool');
 const Struct = require('./struct');
-module.exports = function(ast) {
+module.exports = function(ast, thriftTool) {
   const res = {};
   const identifier = ast.id.name;
 
@@ -26,13 +25,13 @@ module.exports = function(ast) {
       oneway: ele.oneway,
     };
 
-    field.returns = ThriftTool.resolveMixType(ele.returns);
-    field.arguments = Struct(ele)[key];
+    field.returns = thriftTool.resolveMixType(ele.returns);
+    field.arguments = Struct(ele, thriftTool)[key];
 
     // warn
     field.throws = ele.throws && ele.throws.map(ele => {
       return {
-        [ele.name]: ThriftTool.resolveMixType(ele.valueType)
+        [ele.name]: thriftTool.resolveMixType(ele.valueType)
       }
     })[1]; // 0 为 success 结构
     res[identifier]['service'][key] = field;

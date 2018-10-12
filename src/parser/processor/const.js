@@ -1,6 +1,5 @@
-const ThriftTool = require('../../thrift-tool');
-module.exports = function(ast) {
+module.exports = function(ast, thriftTool) {
   return {
-    [ast.id.name]: ThriftTool.resolveMixValue(ast.value)
+    [ast.id.name]: thriftTool.resolveMixValue(ast.value)
   };
 }

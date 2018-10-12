@@ -1,7 +1,6 @@
 const Utils = require('@lushijie/utils');
-const ThriftTool = require('../../thrift-tool');
 
-module.exports = function(ast) {
+module.exports = function(ast, thriftTool) {
   const res = {};
   const identifier = ast.id.name;
   res[identifier] = {};
@@ -17,10 +16,10 @@ module.exports = function(ast) {
 
     // 默认值，目前仅支持常量，有待加强
     if (ele.defaultValue) {
-      field.defaultValue = ThriftTool.resolveMixValue(ele.defaultValue);
+      field.defaultValue = thriftTool.resolveMixValue(ele.defaultValue);
     }
 
-    field = Utils.extend(field, ThriftTool.resolveMixType(ele.valueType));
+    field = Utils.extend(field, thriftTool.resolveMixType(ele.valueType));
     res[identifier][key] = field;
   });
 

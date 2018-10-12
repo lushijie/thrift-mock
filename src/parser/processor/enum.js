@@ -1,4 +1,4 @@
-module.exports = function(ast) {
+module.exports = function(ast, thriftTool) {
   const identifier = ast.id.name;
   const res = {
     [identifier]: {}
