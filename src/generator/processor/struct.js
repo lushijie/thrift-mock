@@ -13,18 +13,19 @@ module.exports = function structGen({syntax, gen}) {
 
     function fn({valueStyle, valueType, keyType = null}) {
       if (valueStyle === 'basetype' || valueStyle === 'union') {
-        return `${required ? '★ ' : ''}${optional ? '☆ ' : ''}${valueType}`; // random position
-      }
-
-      if (valueStyle === 'identifier') {
+        let prefix = '♡ ';
+        if (required) {
+          prefix = '★ ';
+        }
+        if (optional) {
+          prefix = '☆ ';
+        }
+        return `${prefix}${valueType}`; // random position
+      } else if (valueStyle === 'identifier') {
         return gen(valueType);
-      }
-
-      if (valueStyle === 'list' || valueStyle === 'set') {
+      } else if (valueStyle === 'list' || valueStyle === 'set') {
         return [fn(valueType)]
-      }
-
-      if (valueStyle === 'map') {
+      } else if (valueStyle === 'map') {
         return {
           [fn(keyType)]: fn(valueType)
         }

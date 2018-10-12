@@ -1,14 +1,15 @@
 const Utils = require('@lushijie/utils');
 const Parser = require('../parser');
-const ALL_THRIFT_TYPE = require('../constants/type');
-const GenProcessor = require('../generator');
+const Generator = require('../generator');
 const Thriftrw = require('thriftrw').Thrift;
+const ALL_THRIFT_TYPE = require('../constants/type');
 
 module.exports = class ThriftTool {
   constructor() {
     this.store = this._createStore();
   }
 
+  // 解析
   parse(source, name) {
     let DEFINITIONS;
     try {
@@ -20,10 +21,12 @@ module.exports = class ThriftTool {
       }).toJSON();
       const ENTRY_POINT = thriftrw.entryPoint;
       DEFINITIONS = thriftrw['asts'][ENTRY_POINT]['definitions'];
+      if(!DEFINITIONS) {
+        throw new Error(`解析结果为空: ${JSON.stringify(thriftrw)}`);
+      }
     } catch(e) {
       throw new Error(`语法错误，生成AST失败：${e}`);
     }
-
     // console.log('--- 第一次解析 thriftrw 结果 ---');
     // console.log(JSON.stringify(DEFINITIONS));
 
@@ -36,8 +39,7 @@ module.exports = class ThriftTool {
         throw new Error(`${type} 类型解析器不存在`);
       }
     });
-
-    // console.log('--- 第二次解析 own 结果 ---');
+    // console.log('--- 第二次解析 ast转化 结果 ---');
     // console.log(JSON.stringify(this.getStore(), undefined, 2))
 
     this.resolveTypedef();
@@ -49,8 +51,20 @@ module.exports = class ThriftTool {
     // console.log('--- 第四次解析 resolveUnion 结果---');
     // console.log(JSON.stringify(this.getStore(), undefined, 2));
 
-    console.log('--- 获得 JSON 格式 ---');
-    console.log(JSON.stringify(gen(name), undefined, 2))
+    if (!name) {
+      let ALL = {};
+      ALL_THRIFT_TYPE.forEach(type => {
+        ALL[type] = ALL[type] || {};
+        Object.keys(this.getStore()[type]).forEach(key => {
+          if (key) {
+            ALL[type][key] = gen(key)
+          }
+        })
+      });
+      return ALL;
+    }
+
+    return gen(name);
   }
 
   // 创建存储空间
@@ -62,6 +76,7 @@ module.exports = class ThriftTool {
     return store;
   }
 
+  // 根据类型设置存储
   setStoreByType(type, payload) {
     this.store[type] = Utils.extend(this.store[type], payload);
   }
@@ -71,13 +86,14 @@ module.exports = class ThriftTool {
     return this.store;
   }
 
+  // 创建JSON格式
   createJSON() {
     const store = this.getStore();
     const self = this;
     return function gen(name) {
       const type = self.findThriftType(name);
       if (type) {
-        const fn = GenProcessor[type];
+        const fn = Generator[type];
         if (Utils.isFunction(fn)) {
           return fn({
             name,
@@ -183,14 +199,14 @@ module.exports = class ThriftTool {
     });
   }
 
-  // Union 类型解析
+  // union 类型替换
   resolveUnion(gen) {
     const store = this.getStore();
     const theUnion = store['union'];
 
     Object.keys(theUnion).map(name => {
       Object.keys(theUnion[name]).forEach(key => {
-        theUnion[name][key] = GenProcessor['struct']({
+        theUnion[name][key] = Generator['struct']({
           syntax: {
             [key]: theUnion[name][key]
           },
@@ -219,7 +235,6 @@ module.exports = class ThriftTool {
                 }
                 return theUnion[key]
               }).join('|'),
-              union: true,
             });
           }
         });
