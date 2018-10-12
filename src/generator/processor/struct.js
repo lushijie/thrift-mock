@@ -1,16 +1,19 @@
-const ThriftTool = require('../../thrift-tool');
-
 module.exports = function structGen({syntax, gen, mapKey}) {
   const res = {};
 
   Object.keys(syntax).forEach(key => {
-    const valueStyle = syntax[key].valueStyle;
-    const valueType = syntax[key].valueType;
-    const keyType = syntax[key].keyType || null; // for map
+    const theSyntax = syntax[key];
+    const {
+      valueStyle,
+      valueType,
+      keyType,
+      required,
+      optional
+    } = theSyntax;
 
-    function fn({valueStyle, valueType, keyType}) {
+    function fn({valueStyle, valueType, keyType = null}) {
       if (valueStyle === 'basetype') {
-        return valueType; // random position
+        return `${required ? '★ ' : ''}${optional ? '☆ ' : ''}${valueType}`; // random position
       }
 
       if (valueStyle === 'identifier') {

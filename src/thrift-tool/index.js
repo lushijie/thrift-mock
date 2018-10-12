@@ -1,5 +1,6 @@
 const Utils = require('@lushijie/utils');
 const ALL_THRIFT_TYPE = require('../constants/type');
+const GenProcessor = require('../generator');
 
 module.exports = {
   // 创建存储空间
@@ -9,6 +10,26 @@ module.exports = {
       store[type] = {};
     });
     return store;
+  },
+
+  createJSON(store, mapKey = {}) {
+    store = Utils.extend({}, store);
+    return function (name, gen) {
+      const type = module.exports.findThriftType(store, name);
+      if (type) {
+        const fn = GenProcessor[type];
+        if (Utils.isFunction(fn)) {
+          return fn({
+            name,
+            syntax: store[type][name],
+            gen,
+            mapKey
+          });
+        }
+        throw new Error(`${type} 类型构造器不存在`);
+      }
+      throw new Error(`${name} 未在 thrift 定义中找到`);
+    }
   },
 
   // 查找 thrift 类型

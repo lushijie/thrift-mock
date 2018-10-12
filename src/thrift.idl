@@ -1,5 +1,4 @@
 // const 基本类型 | 集合类型
-
 // const MyInteger CUT_TIME = 10;
 // const string B = 'sdf';
 // const list<string> Year = ['2012', '2013', '2014']
@@ -11,22 +10,36 @@
 // const set<i32> Month = ['1', '2', '3']
 // const list<list<string>> A = [['a'], ['b'], ['c']]
 
-// exception IException {
-//   1: i32 errno = 500,
-//   2: string errmsg = "Server Error..."
+// enum Sex {
+// 	FEMALE = 1,
+// 	MALE
 // }
 
-// typedef i32 MyInteger
+// struct Honor {
+//   1: required i32 id,
+// 	2: optional string content
+// }
+
+typedef i32 MyInteger
+const MyInteger C = 123;
+
+struct Honor2 {
+  1: i32 lista;
+}
+
+exception IException {
+  1: i32 errno = 500,
+  2: string errmsg = "Server Error..."
+}
+
+
 // typedef Teacher myTeacher
 // typedef list<Teacher> myTeacherList
 // typedef list<list<Teacher>> myTeacherList2
 // typedef set<Address> myAddressList2
 // typedef map<i32, Address> myAddressList3
 
-// enum Sex {
-// 	FEMALE = 1,
-// 	MALE
-// }
+
 
 // struct User {
 // 	1: required i32 id = 1;
@@ -47,9 +60,7 @@
 // }
 
 
-// struct Honor {
-// 	2: string content;
-// }
+
 // typedef list<map<i32, string>> mylist
 
 // struct Teacher {
@@ -76,7 +87,8 @@
 // }
 
 // struct Work {
-//   1: i32 w,
+//   1: optional i32 w,
+//   2: required i32 w2,
 // }
 
 // struct User {
@@ -125,15 +137,15 @@
 //   1: i32 w = CUT_TIME,
 // }
 
-exception InvalidOperation {
-  1: i32 errno = 500,
-  2: string errmsg = "Server Error..."
-}
+// exception InvalidOperation {
+//   1: i32 errno = 500,
+//   2: string errmsg = "Server Error..."
+// }
 
 
-service Service1 {
-  list<i32> ping(1:i32 num1, 2:string num2) throws (1:InvalidOperation myerr)
-}
+// service Service1 {
+//   Work ping(1:i32 num1, 2:string num2) throws (1:InvalidOperation myerr)
+// }
 
 
 // struct Work {
@@ -141,6 +153,6 @@ service Service1 {
 // }
 
 
-service Service2 extends Service1 {
-  void ping2()
-}
+// service Service2 extends Service1 {
+//   void ping2()
+// }
