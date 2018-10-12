@@ -48,6 +48,7 @@ function secondParse() {
   // console.log(JSON.stringify(STORE, undefined, 2))
 
   STORE = ThriftTool.resolveTypedef(STORE);
+  STORE = ThriftTool.resolveUnion(STORE);
   console.log('--- 第三次解析结果 ---');
   console.log(JSON.stringify(STORE, undefined, 2))
   return STORE;
@@ -56,6 +57,6 @@ const STORE = secondParse();
 
 // // 构造结构化的数据
 const gen = ThriftTool.createJSON(STORE);
-const res = gen('IException', gen);
+const res = gen('Honor2');
 console.log('--- 获得 JSON 格式 ---');
 console.log(JSON.stringify(res, undefined, 2))

@@ -14,7 +14,7 @@ module.exports = {
 
   createJSON(store, mapKey = {}) {
     store = Utils.extend({}, store);
-    return function (name, gen) {
+    return function gen(name) {
       const type = module.exports.findThriftType(store, name);
       if (type) {
         const fn = GenProcessor[type];
@@ -110,6 +110,34 @@ module.exports = {
           // ele && 兼容 service baseService: null 的情况
           if (ele && ele.valueStyle === 'identifier' && module.exports.findThriftType(store, ele.valueType) === 'typedef') {
             ele = Utils.extend(ele, store['typedef'][ele.valueType]);
+          }
+        });
+      };
+
+      Object.keys(store[type]).forEach(ele => {
+        fn(store[type][ele]);
+      });
+    });
+    return store;
+  },
+
+  resolveUnion(store) {
+    store = Utils.extend({}, store);
+    const replaceType= ['exception', 'struct', 'service'];
+    replaceType.forEach(type => {
+      function fn(obj) {
+        Object.keys(obj).forEach(key => {
+          let ele = obj[key];
+          // ele && 兼容 service baseService: null 的情况
+          if (ele && ele.valueStyle === 'identifier' && module.exports.findThriftType(store, ele.valueType) === 'union') {
+            const theUnion = store['union'][ele.valueType]
+            ele = Utils.extend(ele, {
+              valueStyle: 'basetype',
+              valueType: Object.keys(theUnion).map(key => {
+                return theUnion[key].valueType;
+              }).join(';'),
+              union: true,
+            });
           }
         });
       };
