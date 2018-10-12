@@ -17,7 +17,7 @@ module.exports = function structGen({syntax, gen, mapKey}) {
       }
 
       if (valueStyle === 'identifier') {
-        return gen(valueType, gen);
+        return gen(valueType);
       }
 
       if (valueStyle === 'list' || valueStyle === 'set') {
