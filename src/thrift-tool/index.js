@@ -42,12 +42,12 @@ module.exports = class ThriftTool {
     // console.log('--- 第二次解析 ast转化 结果 ---');
     // console.log(JSON.stringify(this.getStore(), undefined, 2))
 
-    const genJSON = this.createJSON();
-    this.resolveTypedef(genJSON);
+    const gen = this.createJSON();
+    this.resolveTypedef(gen);
     // console.log('--- 第三次解析 resolveTypedef 结果 ---');
     // console.log(JSON.stringify(this.getStore(), undefined, 2));
 
-    this.resolveUnion(genJSON);
+    this.resolveUnion(gen);
     // console.log('--- 第四次解析 resolveUnion 结果---');
     console.log(JSON.stringify(this.getStore(), undefined, 2));
 
@@ -57,14 +57,14 @@ module.exports = class ThriftTool {
         ALL[type] = ALL[type] || {};
         Object.keys(this.getStore()[type]).forEach(key => {
           if (key) {
-            ALL[type][key] = genJSON(key)
+            ALL[type][key] = gen(key)
           }
         })
       });
       return ALL;
     }
 
-    return genJSON(name);
+    return gen(name);
   }
 
   // 创建存储空间
