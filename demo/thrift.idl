@@ -1,7 +1,48 @@
-// const 基本类型 | 集合类型
-const MyInteger CUT_TIME = 10;
-const string B = 'sdf';
-const list<string> Year = ['2012', '2013', '2014']
+// typedef list<i32> Myi32List
+// const Myi32List NUM = [1, 2, 3];
+// const double PI = 3.14;
+
+// // enum Category {
+// //   NEWS = 1,
+// //   NOVEL,
+// //   POETRY
+// // }
+
+struct Article {
+  1: required i32 id,
+  2: optional string content,
+  // 3: Category cate
+}
+
+// exception IException {
+//   1: i32 errno = 500,
+//   2: string errmsg = "Server Error..."
+// }
+
+union FuzzyRequest {
+  1: i32 id;
+  2: string word;
+}
+
+service ArticleService {
+  // void ping(),
+  // Article getArticleById(1:i32 id) throws (1:IException e),
+  // list<Article> getAllArticle(),
+  // i32 setArticle(1:Article art),
+  Article fuzzySearchArticle(1:FuzzyRequest fr)
+}
+
+
+
+
+
+
+
+
+
+
+
+// const list<string> Year = ['2012', '2013', '2014']
 
 // const map<string, list<i32>> FOOD_TYPE_MAP = {
 // 	'1': [1, 2],
@@ -10,17 +51,6 @@ const list<string> Year = ['2012', '2013', '2014']
 // const set<i32> Month = ['1', '2', '3']
 // const list<list<string>> A = [['a'], ['b'], ['c']]
 
-// enum Sex {
-// 	FEMALE = 1,
-// 	MALE
-// }
-
-struct Honor {
-  1: required i32 id,
-	2: optional string content
-}
-
-// typedef list<i32> MyInteger
 // const MyInteger C = 123;
 
 // union ARG {
@@ -28,9 +58,9 @@ struct Honor {
 //   2: i64 long_arg;
 // }
 
-struct Honor2 {
-  1: i32 lista;
-}
+// struct Honor2 {
+//   1: i32 lista;
+// }
 
 // exception IException {
 //   1: i32 errno = 500,

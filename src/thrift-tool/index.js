@@ -43,13 +43,13 @@ module.exports = class ThriftTool {
     // console.log(JSON.stringify(this.getStore(), undefined, 2))
 
     this.resolveTypedef();
-    // console.log('--- 第三次解析 resolveTypedef 结果 ---');
-    // console.log(JSON.stringify(this.getStore(), undefined, 2));
+    console.log('--- 第三次解析 resolveTypedef 结果 ---');
+    console.log(JSON.stringify(this.getStore(), undefined, 2));
 
     const gen = this.createJSON();
     this.resolveUnion(gen);
-    // console.log('--- 第四次解析 resolveUnion 结果---');
-    // console.log(JSON.stringify(this.getStore(), undefined, 2));
+    console.log('--- 第四次解析 resolveUnion 结果---');
+    console.log(JSON.stringify(this.getStore(), undefined, 2));
 
     if (!name) {
       let ALL = {};
@@ -218,6 +218,7 @@ module.exports = class ThriftTool {
     const replaceType= ['exception', 'struct', 'service'];
     replaceType.forEach(type => {
       const self = this;
+
       function fn(obj) {
         Object.keys(obj).forEach(key => {
           let ele = obj[key];
@@ -236,6 +237,10 @@ module.exports = class ThriftTool {
                 return theUnion[key]
               }).join('|'),
             });
+          }
+
+          if (ele && Utils.isObject(ele)) {
+            fn(ele);
           }
         });
       };
