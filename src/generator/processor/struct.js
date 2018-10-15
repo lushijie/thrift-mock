@@ -1,3 +1,4 @@
+const Icon = require('../../constants/icon');
 module.exports = function structGen({syntax, gen}) {
   const res = {};
 
@@ -15,12 +16,12 @@ module.exports = function structGen({syntax, gen}) {
       if(valueStyle === 'union') {
         return valueType;
       } else if (valueStyle === 'basetype') {
-        let prefix = '♡ ';
+        let prefix = `${Icon['basic']} `;
         if (required) {
-          prefix = '★ ';
+          prefix = `${Icon['required']} `;
         }
         if (optional) {
-          prefix = '☆ ';
+          prefix = `${Icon['optional']} `;
         }
         return `${prefix}${valueType}`; // random position
       } else if (valueStyle === 'identifier') {

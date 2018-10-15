@@ -1,1 +1,34 @@
-const string B = 'sdf';
+typedef list<i32> Myi32List
+const Myi32List NUM = [1, 2, 3];
+const double PI = 3.14;
+
+enum Category {
+  NEWS = 1,
+  NOVEL,
+  POETRY
+}
+
+struct Article {
+  1: required i32 id,
+  2: optional string content,
+  3: Category cate
+}
+
+exception IException {
+  1: i32 errno = 500,
+  2: string errmsg = "Server Error..."
+}
+
+union FuzzyRequest {
+  1: list<i32> id;
+  2: string word;
+}
+
+service ArticleService {
+  void ping(1:Myi32List a),
+  Article getArticleById(1:i32 id) throws (1:IException e),
+  list<Article> getAllArticle(),
+  i32 setArticle(1:Article art),
+  Article fuzzySearchArticle(1:FuzzyRequest fr)
+}
+

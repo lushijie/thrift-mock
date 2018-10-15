@@ -3,6 +3,7 @@ const Parser = require('../parser');
 const Generator = require('../generator');
 const Thriftrw = require('thriftrw').Thrift;
 const ALL_THRIFT_TYPE = require('../constants/type');
+const Icon = require('../constants/icon');
 
 module.exports = class ThriftTool {
   constructor() {
@@ -229,7 +230,7 @@ module.exports = class ThriftTool {
                     return JSON.stringify(theUnion[key]);
                   }
                   return theUnion[key]
-                }).join('|'),
+                }).join(Icon['or']),
               });
             }
           }
