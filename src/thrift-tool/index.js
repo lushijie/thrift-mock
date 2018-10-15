@@ -42,13 +42,13 @@ module.exports = class ThriftTool {
     // console.log('--- 第二次解析 ast转化 结果 ---');
     // console.log(JSON.stringify(this.getStore(), undefined, 2))
 
-    this.resolveTypedef();
-    console.log('--- 第三次解析 resolveTypedef 结果 ---');
-    console.log(JSON.stringify(this.getStore(), undefined, 2));
+    const genJSON = this.createJSON();
+    this.resolveTypedef(genJSON);
+    // console.log('--- 第三次解析 resolveTypedef 结果 ---');
+    // console.log(JSON.stringify(this.getStore(), undefined, 2));
 
-    const gen = this.createJSON();
-    this.resolveUnion(gen);
-    console.log('--- 第四次解析 resolveUnion 结果---');
+    this.resolveUnion(genJSON);
+    // console.log('--- 第四次解析 resolveUnion 结果---');
     console.log(JSON.stringify(this.getStore(), undefined, 2));
 
     if (!name) {
@@ -57,14 +57,14 @@ module.exports = class ThriftTool {
         ALL[type] = ALL[type] || {};
         Object.keys(this.getStore()[type]).forEach(key => {
           if (key) {
-            ALL[type][key] = gen(key)
+            ALL[type][key] = genJSON(key)
           }
         })
       });
       return ALL;
     }
 
-    return gen(name);
+    return genJSON(name);
   }
 
   // 创建存储空间
@@ -175,12 +175,17 @@ module.exports = class ThriftTool {
   }
 
   // 将 typedef 替换
-  resolveTypedef() {
+  resolveTypedef(gen) {
     const store = this.getStore();
     const replaceType= ['exception', 'struct', 'service'];
+
     replaceType.forEach(type => {
       const self = this;
+
       function fn(obj) {
+        if (!Utils.isObject(obj)) {
+          return;
+        }
         Object.keys(obj).forEach(key => {
           let ele = obj[key];
           if (
@@ -193,17 +198,45 @@ module.exports = class ThriftTool {
         });
       };
 
-      Object.keys(store[type]).forEach(ele => {
-        fn(store[type][ele]);
-      });
+      let preobj = store[type];
+      if (type === 'service') {
+        Object.keys(preobj).forEach(serviceName => {
+          let preobj1 = preobj[serviceName];
+          Object.keys(preobj1).forEach(key => {
+            let preobj2 = preobj1['service'];
+            Object.keys(preobj2).forEach(methodName => {
+              let preobj3 = preobj2[methodName];
+              fn(preobj3['returns']);
+              fn(preobj3['arguments']);
+              fn(preobj3['throws']);
+            });
+          });
+        });
+      } else {
+        Object.keys(preobj).forEach(ele => {
+          fn(preobj[ele]);
+        });
+      }
+    });
+
+    // repleace typedef
+    const theDef = store['typedef'];
+    Object.keys(theDef).map(key => {
+      theDef[key] = Generator['struct']({
+        syntax: {
+          [key]: theDef[key]
+        },
+        gen
+      })[key];
     });
   }
 
   // union 类型替换
   resolveUnion(gen) {
     const store = this.getStore();
-    const theUnion = store['union'];
 
+    // replace union
+    const theUnion = store['union'];
     Object.keys(theUnion).map(name => {
       Object.keys(theUnion[name]).forEach(key => {
         theUnion[name][key] = Generator['struct']({
@@ -220,6 +253,9 @@ module.exports = class ThriftTool {
       const self = this;
 
       function fn(obj) {
+        if (!Utils.isObject(obj)) {
+          return;
+        }
         Object.keys(obj).forEach(key => {
           let ele = obj[key];
           if (
@@ -245,9 +281,25 @@ module.exports = class ThriftTool {
         });
       };
 
-      Object.keys(store[type]).forEach(ele => {
-        fn(store[type][ele]);
-      });
+      let preobj = store[type];
+      if (type === 'service') {
+        Object.keys(preobj).forEach(serviceName => {
+          let preobj1 = preobj[serviceName];
+          Object.keys(preobj1).forEach(key => {
+            let preobj2 = preobj1['service'];
+            Object.keys(preobj2).forEach(methodName => {
+              let preobj3 = preobj2[methodName];
+              fn(preobj3['returns']);
+              fn(preobj3['arguments']);
+              fn(preobj3['throws']);
+            });
+          });
+        });
+      } else {
+        Object.keys(preobj).forEach(ele => {
+          fn(preobj[ele]);
+        });
+      }
     });
   }
 }

@@ -12,7 +12,9 @@ module.exports = function structGen({syntax, gen}) {
     } = theSyntax;
 
     function fn({valueStyle, valueType, keyType = null}) {
-      if (valueStyle === 'basetype' || valueStyle === 'union') {
+      if(valueStyle === 'union') {
+        return valueType;
+      } else if (valueStyle === 'basetype') {
         let prefix = '♡ ';
         if (required) {
           prefix = '★ ';
