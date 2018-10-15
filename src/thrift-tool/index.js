@@ -39,8 +39,8 @@ module.exports = class ThriftTool {
         throw new Error(`${type} 类型解析器不存在`);
       }
     });
-    // console.log('--- 第二次解析 ast转化 结果 ---');
-    // console.log(JSON.stringify(this.getStore(), undefined, 2))
+    console.log('--- 第二次解析 ast转化 结果 ---');
+    console.log(JSON.stringify(this.getStore(), undefined, 2))
 
     const gen = this.createJSON();
     this.resolveTypedef(gen);
@@ -49,7 +49,7 @@ module.exports = class ThriftTool {
 
     this.resolveUnion(gen);
     // console.log('--- 第四次解析 resolveUnion 结果---');
-    console.log(JSON.stringify(this.getStore(), undefined, 2));
+    // console.log(JSON.stringify(this.getStore(), undefined, 2));
 
     if (!name) {
       let ALL = {};
@@ -177,8 +177,19 @@ module.exports = class ThriftTool {
   // 将 typedef 替换
   resolveTypedef(gen) {
     const store = this.getStore();
-    const replaceType= ['exception', 'struct', 'service'];
 
+    // repleace typedef
+    const theDef = store['typedef'];
+    Object.keys(theDef).map(key => {
+      theDef[key] = Generator['struct']({
+        syntax: {
+          [key]: theDef[key]
+        },
+        gen
+      })[key];
+    });
+
+    const replaceType= ['exception', 'struct', 'service'];
     replaceType.forEach(type => {
       const self = this;
 
@@ -217,17 +228,6 @@ module.exports = class ThriftTool {
           fn(preobj[ele]);
         });
       }
-    });
-
-    // repleace typedef
-    const theDef = store['typedef'];
-    Object.keys(theDef).map(key => {
-      theDef[key] = Generator['struct']({
-        syntax: {
-          [key]: theDef[key]
-        },
-        gen
-      })[key];
     });
   }
 
