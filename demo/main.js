@@ -5,4 +5,4 @@ const tt = new ThriftTool();
 const source = fs.readFileSync(path.join(__dirname, 'thrift.idl'), 'ascii');
 const res = tt.parse(source);
 console.log('--- last ---');
-// console.log(JSON.stringify(res, undefined, 2));
+console.log(JSON.stringify(res, undefined, 2));
