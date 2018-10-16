@@ -40,8 +40,8 @@ module.exports = class ThriftTool {
         throw new Error(`${type} 类型解析器不存在`);
       }
     });
-    console.log('--- 第二次解析 ast转化 结果 ---');
-    console.log(JSON.stringify(this.getStore(), undefined, 2))
+    // console.log('--- 第二次解析 ast转化 结果 ---');
+    // console.log(JSON.stringify(this.getStore(), undefined, 2))
 
     const gen = this.createJSON();
     this.resolveDefUnion(gen);
