@@ -1,3 +1,4 @@
+const path = require('path');
 const Utils = require('@lushijie/utils');
 const Parser = require('../parser');
 const Generator = require('../generator');
@@ -11,15 +12,18 @@ module.exports = class ThriftTool {
   }
 
   // 解析
-  parse(source, name) {
+  parse(filePath, name) {
     let DEFINITIONS;
     try {
       const thriftrw = new Thriftrw({
-        source: source,
+        // source: filePath,
         strict: false,
+        entryPoint: path.resolve(filePath),
+        allowFilesystemAccess: true,
         allowOptionalArguments: true,
-        defaultAsUndefined: false
+        defaultAsUndefined: false,
       }).toJSON();
+
       const ENTRY_POINT = thriftrw.entryPoint;
       DEFINITIONS = thriftrw['asts'][ENTRY_POINT]['definitions'];
       if(!DEFINITIONS) {
@@ -28,6 +32,7 @@ module.exports = class ThriftTool {
     } catch(e) {
       throw new Error(`语法错误，生成AST失败：${e}`);
     }
+
     // console.log('--- 第一次解析 thriftrw 结果 ---');
     // console.log(JSON.stringify(DEFINITIONS));
 
