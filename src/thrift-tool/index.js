@@ -54,14 +54,18 @@ module.exports = class ThriftTool {
         defaultAsUndefined: false,
       }).toJSON();
 
+      this.result[0] = thriftrw;
+      console.log('--- 第 0 次原始解析结果 ---');
+      console.log(JSON.stringify(this.result[0], undefined, 2));
+
       const ENTRY_POINT = thriftrw.entryPoint;
       DEFINITIONS = thriftrw['asts'][ENTRY_POINT]['definitions'];
       if(!DEFINITIONS) {
         throw new Error(`解析结果为空: ${JSON.stringify(thriftrw)}`);
       }
       this.result[1] = DEFINITIONS;
-      // console.log('--- 第一次解析 thriftrw 结果 ---');
-      // console.log(JSON.stringify(this.result[1]));
+      console.log('--- 第 1 次 DEFINITION 解析结果 ---');
+      console.log(JSON.stringify(this.result[1], undefined, 2));
     } catch(e) {
       throw new Error(`语法错误，生成AST失败：${e}`);
     }
@@ -76,30 +80,33 @@ module.exports = class ThriftTool {
       }
     });
     this.result[2] = Utils.extend({}, this.getStore());
-    // console.log('--- 第二次解析 ast转化 结果 ---');
-    // console.log(JSON.stringify(this.result[2]), undefined, 2))
+    console.log('--- 第 2 次解析 ast转化 结果 ---');
+    console.log(JSON.stringify(this.result[2], undefined, 2));
 
     const gen = this.createJSON();
     this.resolveDefUnion(gen);
     this.result[3] = Utils.extend({}, this.getStore());
-    // console.log('--- 第三次解析 resolveDefUnion 结果 ---');
-    // console.log(JSON.stringify(this.result[3], undefined, 2));
+    console.log('--- 第 3 次解析 resolveDefUnion 结果 ---');
+    console.log(JSON.stringify(this.result[3], undefined, 2));
 
     // 不传具体获取的结构名时处理
+    let res = {};
     if (!name) {
-      let ALL = {};
       ALL_THRIFT_TYPE.forEach(type => {
-        ALL[type] = ALL[type] || {};
+        res[type] = res[type] || {};
         Object.keys(this.getStore()[type]).forEach(key => {
           if (key) {
-            ALL[type][key] = gen(key)
+            res[type][key] = gen(key)
           }
         })
       });
-      return ALL;
+    } else {
+      res = gen(name);
     }
-
-    return gen(name);
+    this.result[4] = res;
+    console.log('--- 第 4 次解析 json 结果 ---');
+    console.log(JSON.stringify(this.result[3], undefined, 2));
+    return res;
   }
 
   // 创建JSON格式的factor
