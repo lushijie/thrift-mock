@@ -17,7 +17,7 @@ program
   .option('-o, --output <value>', 'output file path')
   .parse(process.argv);
 
-const sourcePath = program.source;
+const sourcePath = program.file;
 const outputPath = `${program.outputPath || getFileName(sourcePath)}.json`;
 const sourceContent = fs.readFileSync(path.join(sourcePath), 'utf8');
 
