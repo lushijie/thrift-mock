@@ -12,9 +12,9 @@ const getFileName = function(filename) {
 
 program
   .version('0.1.0')
-  .option('-s, --source <value>', '.thrift file')
-  .option('-c, --class <value>', 'get name struct')
-  .option('-o, --output <value>', 'Output file path')
+  .option('-f, --file <value>', 'thrift file path')
+  .option('-c, --class <value>', 'name of element')
+  .option('-o, --output <value>', 'output file path')
   .parse(process.argv);
 
 const sourcePath = program.source;
