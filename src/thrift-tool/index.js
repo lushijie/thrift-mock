@@ -8,7 +8,37 @@ const Icon = require('../constants/icon');
 
 module.exports = class ThriftTool {
   constructor() {
+    // 解析数据都存在这里，解析也是操作引用读取
     this.store = this._createStore();
+
+    this.result = {};
+  }
+
+  // 创建存储空间
+  _createStore() {
+    const store = {};
+    ALL_THRIFT_TYPE.forEach(type => {
+      store[type] = {};
+    });
+    return store;
+  }
+
+  // 根据类型设置存储，
+  _setStoreByType(type, payload) {
+    this.store[type] = Utils.extend(this.store[type], payload);
+  }
+
+  // 获取存储空间
+  getStore() {
+    return this.store;
+  }
+
+  // 获取第N步的解析结果
+  getResult(step) {
+    if (!step) {
+      return this.result;
+    }
+    return this.result[step];
   }
 
   // 解析
@@ -29,30 +59,33 @@ module.exports = class ThriftTool {
       if(!DEFINITIONS) {
         throw new Error(`解析结果为空: ${JSON.stringify(thriftrw)}`);
       }
+      this.result[1] = DEFINITIONS;
+      // console.log('--- 第一次解析 thriftrw 结果 ---');
+      // console.log(JSON.stringify(this.result[1]));
     } catch(e) {
       throw new Error(`语法错误，生成AST失败：${e}`);
     }
-
-    // console.log('--- 第一次解析 thriftrw 结果 ---');
-    // console.log(JSON.stringify(DEFINITIONS));
 
     DEFINITIONS.forEach(ele => {
       const type = ele.type.toLowerCase();
       const fn = Parser[type];
       if (Utils.isFunction(fn)) {
-          this.setStoreByType(type, fn(ele, this));
+          this._setStoreByType(type, fn(ele, this));
       } else {
         throw new Error(`${type} 类型解析器不存在`);
       }
     });
+    this.result[2] = Utils.extend({}, this.getStore());
     // console.log('--- 第二次解析 ast转化 结果 ---');
-    // console.log(JSON.stringify(this.getStore(), undefined, 2))
+    // console.log(JSON.stringify(this.result[2]), undefined, 2))
 
     const gen = this.createJSON();
     this.resolveDefUnion(gen);
+    this.result[3] = Utils.extend({}, this.getStore());
     // console.log('--- 第三次解析 resolveDefUnion 结果 ---');
-    // console.log(JSON.stringify(this.getStore(), undefined, 2));
+    // console.log(JSON.stringify(this.result[3], undefined, 2));
 
+    // 不传具体获取的结构名时处理
     if (!name) {
       let ALL = {};
       ALL_THRIFT_TYPE.forEach(type => {
@@ -69,26 +102,7 @@ module.exports = class ThriftTool {
     return gen(name);
   }
 
-  // 创建存储空间
-  _createStore() {
-    const store = {};
-    ALL_THRIFT_TYPE.forEach(type => {
-      store[type] = {};
-    });
-    return store;
-  }
-
-  // 根据类型设置存储
-  setStoreByType(type, payload) {
-    this.store[type] = Utils.extend(this.store[type], payload);
-  }
-
-  // 获取存储空间
-  getStore() {
-    return this.store;
-  }
-
-  // 创建JSON格式
+  // 创建JSON格式的factor
   createJSON() {
     const store = this.getStore();
     const self = this;
@@ -191,9 +205,11 @@ module.exports = class ThriftTool {
       });
     }
 
+    // typedef
     const theDef = store['typedef'];
     fn(theDef);
 
+    // union
     const theUnion = store['union'];
     Object.keys(theUnion).map(name => {
       fn(theUnion[name]);
@@ -211,7 +227,6 @@ module.exports = class ThriftTool {
 
       function fn(obj) {
         if (!Utils.isObject(obj)) return;
-
         Object.keys(obj).forEach(key => {
           let ele = obj[key];
 
@@ -219,14 +234,17 @@ module.exports = class ThriftTool {
           if (ele && ele.valueStyle === 'identifier') {
             const type = self.findThriftType(ele.valueType);
 
+            // typedef
             if (type === 'typedef') {
               ele = Utils.extend(ele, store['typedef'][ele.valueType]);
-            } else if (type === 'union') {
+            }
+
+            // union
+            if (type === 'union') {
               // union 嵌套处理
               if (ele && Utils.isObject(ele)) {
                 return fn(ele);
               }
-
               const theUnion = store['union'][ele.valueType]
               ele = Utils.extend(ele, {
                 valueStyle: 'union',
@@ -244,6 +262,7 @@ module.exports = class ThriftTool {
 
       let preobj = store[type];
       if (type === 'service') {
+        // service 处理
         Object.keys(preobj).forEach(serviceName => {
           let preobj1 = preobj[serviceName];
           Object.keys(preobj1).forEach(key => {
@@ -257,115 +276,11 @@ module.exports = class ThriftTool {
           });
         });
       } else {
+        // struct/exception 同等处理
         Object.keys(preobj).forEach(ele => {
           fn(preobj[ele]);
         });
       }
     });
   }
-
-  // // typedef
-  // resolveTypedef(gen) {
-  //   const store = this.getStore();
-
-  //   const replaceType= ['exception', 'struct', 'service'];
-  //   replaceType.forEach(type => {
-  //     const self = this;
-
-  //     function fn(obj) {
-  //       if (!Utils.isObject(obj)) {
-  //         return;
-  //       }
-  //       Object.keys(obj).forEach(key => {
-  //         let ele = obj[key];
-  //         if (
-  //           ele &&  // 兼容 service baseService: null 的情况
-  //           ele.valueStyle === 'identifier' &&
-  //           self.findThriftType(ele.valueType) === 'typedef'
-  //         ) {
-  //           ele = Utils.extend(ele, store['typedef'][ele.valueType]);
-  //         }
-  //       });
-  //     };
-
-  //     let preobj = store[type];
-  //     if (type === 'service') {
-  //       Object.keys(preobj).forEach(serviceName => {
-  //         let preobj1 = preobj[serviceName];
-  //         Object.keys(preobj1).forEach(key => {
-  //           let preobj2 = preobj1['service'];
-  //           Object.keys(preobj2).forEach(methodName => {
-  //             let preobj3 = preobj2[methodName];
-  //             fn(preobj3['returns']);
-  //             fn(preobj3['arguments']);
-  //             fn(preobj3['throws']);
-  //           });
-  //         });
-  //       });
-  //     } else {
-  //       Object.keys(preobj).forEach(ele => {
-  //         fn(preobj[ele]);
-  //       });
-  //     }
-  //   });
-  // }
-
-  // // union
-  // resolveUnion(gen) {
-  //   const store = this.getStore();
-
-  //   const replaceType= ['exception', 'struct', 'service'];
-  //   replaceType.forEach(type => {
-  //     const self = this;
-
-  //     function fn(obj) {
-  //       if (!Utils.isObject(obj)) {
-  //         return;
-  //       }
-  //       Object.keys(obj).forEach(key => {
-  //         let ele = obj[key];
-  //         if (
-  //           ele && // 兼容 service baseService: null 的情况
-  //           ele.valueStyle === 'identifier' &&
-  //           self.findThriftType(ele.valueType) === 'union'
-  //         ) {
-  //           const theUnion = store['union'][ele.valueType]
-  //           ele = Utils.extend(ele, {
-  //             valueStyle: 'union',
-  //             valueType: Object.keys(theUnion).map(key => {
-  //               if (!Utils.isString(theUnion[key])) {
-  //                 return JSON.stringify(theUnion[key]);
-  //               }
-  //               return theUnion[key]
-  //             }).join('|'),
-  //           });
-  //         }
-
-  //         if (ele && Utils.isObject(ele)) {
-  //           fn(ele);
-  //         }
-  //       });
-  //     };
-
-  //     let preobj = store[type];
-  //     if (type === 'service') {
-  //       Object.keys(preobj).forEach(serviceName => {
-  //         let preobj1 = preobj[serviceName];
-  //         Object.keys(preobj1).forEach(key => {
-  //           let preobj2 = preobj1['service'];
-  //           Object.keys(preobj2).forEach(methodName => {
-  //             let preobj3 = preobj2[methodName];
-  //             fn(preobj3['returns']);
-  //             fn(preobj3['arguments']);
-  //             fn(preobj3['throws']);
-  //           });
-  //         });
-  //       });
-  //     } else {
-  //       Object.keys(preobj).forEach(ele => {
-  //         fn(preobj[ele]);
-  //       });
-  //     }
-  //   });
-  // }
 }
