@@ -1,3 +1,7 @@
+const Struct = require('./struct');
 module.exports = function({syntax, gen}) {
-  return syntax;
+  return Struct({
+    syntax: {typedef: syntax},
+    gen,
+  }).typedef;
 }

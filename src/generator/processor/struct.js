@@ -1,7 +1,6 @@
 const Icon = require('../../constants/icon');
 module.exports = function structGen({syntax, gen}) {
   const res = {};
-
   Object.keys(syntax).forEach(key => {
     const theSyntax = syntax[key];
     const {
