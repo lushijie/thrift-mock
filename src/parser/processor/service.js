@@ -8,10 +8,10 @@ module.exports = function(ast, thriftTool) {
     service: {},
   };
 
-  // 与 Struct 结构保持统一
   if (ast.baseService) {
     res[identifier].baseService = {
-      valueStyle: ast.baseService.type.toLowerCase(),
+      // 与 struct 结构保持统一，使用valueStyle、valueType
+      valueStyle: ast.baseService.type.toLowerCase(), // 等于 identifier
       valueType: ast.baseService.name
     }
   }
@@ -27,13 +27,11 @@ module.exports = function(ast, thriftTool) {
 
     field.returns = thriftTool.resolveMixType(ele.returns);
     field.arguments = Struct(ele, thriftTool)[key];
-
-    // warn
     field.throws = ele.throws && ele.throws.map(ele => {
       return {
         [ele.name]: thriftTool.resolveMixType(ele.valueType)
       }
-    })[1]; // 0 为 success 结构
+    })[1]; // 0 为 success 结构， 1 为 error 结构
     res[identifier]['service'][key] = field;
   });
   return res;

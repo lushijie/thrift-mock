@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "bin": {
-    "t2j": "bin/cli.js"
+    "tjson": "bin/cli.js"
   },
   "scripts": {
     "test": "node demo/main.js"

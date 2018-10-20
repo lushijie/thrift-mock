@@ -1,22 +1,22 @@
 const Struct = require('./struct');
 const Utils = require('@lushijie/utils');
+const Base = require('../base');
 
 module.exports = function({syntax, gen}) {
   let res = {};
   Object.keys(syntax.service).forEach(key => {
-    // 返回格式有待确认
     res[key] = {
-      returns: Struct({
-        syntax: {returns: syntax.service[key]['returns']},
+      returns: Base({
+        syntax: syntax.service[key]['returns'],
         gen,
-      }).returns,
+      }),
 
       arguments: Struct({
         syntax: syntax.service[key]['arguments'],
         gen,
       }),
 
-      // warn
+      // objectToPair 将 1:InvalidOperation e 把 e 名字过滤掉
       throws: syntax.service[key]['throws'] && Utils.objectToPairs(Struct({
         syntax: syntax.service[key]['throws'],
         gen,

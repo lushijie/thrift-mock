@@ -3,5 +3,5 @@ module.exports = {
   required: '★',
   optional: '☆',
   enum: '➤',
-  or: '⍮'
+  enum_or: '⍮'
 }
