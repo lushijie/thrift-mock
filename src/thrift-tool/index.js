@@ -51,9 +51,9 @@ module.exports = class ThriftTool {
     const ENTRY_POINT = sourceResult.entryPoint;
     Object.keys(sourceResult.asts).forEach(fileName => {
       const ast = sourceResult['asts'][fileName];
-      if (fileName !== ENTRY_POINT) {
-        this.includeFile[path.parse(fileName).name] = this.parseDefinition(ast['definitions']);
-      }
+      fileName = path.parse(fileName).name;
+      this.includeFile[fileName] = this.parseDefinition(ast['definitions']);
+      this.includeAlias[fileName] = fileName;
 
       if (ast.headers.length > 0) {
         ast.headers.forEach(ele => {
@@ -61,6 +61,8 @@ module.exports = class ThriftTool {
             this.includeAlias[ele.namespace.name] = path.parse(ele.id).name;
           }
         });
+      } else {
+        this.includeAlias[fileName] = fileName;
       }
     });
 
@@ -134,15 +136,27 @@ module.exports = class ThriftTool {
 
   // generator
   createGen() {
-    const store = this.getStore();
+    let store = this.getStore();
     return (name) => {
-      const type = this.findThriftType(name);
+      let type = null;
+      let structName = name;
+
+      // include, .的特殊处理，这里可能有问题，不一定是include, 也可能是const 之类
+      if (name.indexOf('.') > -1) {
+        const includeName = this.includeAlias[name.split('.')[0]];
+        store = this.includeFile[includeName];
+        structName = name.split('.')[1];
+        type = this.findThriftType(structName, this.includeFile[includeName]);
+      } else {
+        type = this.findThriftType(name);
+      }
+
       if (type) {
         const fn = Generator[type];
         if (Utils.isFunction(fn)) {
           return fn({
             name,
-            syntax: store[type][name],
+            syntax: store[type][structName],
             thriftTool: this,
           });
         }
@@ -153,8 +167,7 @@ module.exports = class ThriftTool {
   }
 
   // 查找 thrift 类型
-  findThriftType(name) {
-    const store = this.getStore();
+  findThriftType(name, store = this.getStore()) {
     let matchedType = null;
     ALL_THRIFT_TYPE.forEach(type => {
       if (matchedType) return;
