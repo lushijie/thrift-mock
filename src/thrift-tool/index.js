@@ -8,19 +8,8 @@ const Icon = require('../constants/icon');
 
 module.exports = class ThriftTool {
   constructor() {
-    // 解析数据都存在这里，解析也是操作引用读取
-    this.store = this._createStore();
-
+    this.store = {};
     this.result = {};
-  }
-
-  // 创建存储空间
-  _createStore() {
-    const store = {};
-    ALL_THRIFT_TYPE.forEach(type => {
-      store[type] = {};
-    });
-    return store;
   }
 
   // 根据类型设置存储，
@@ -43,10 +32,9 @@ module.exports = class ThriftTool {
 
   // 解析
   parse(filePath, name) {
-    let DEFINITIONS;
+    let thriftrw;
     try {
-      const thriftrw = new Thriftrw({
-        // source: filePath,
+      thriftrw = new Thriftrw({
         strict: false,
         entryPoint: path.resolve(filePath),
         allowOptionalArguments: true,
@@ -54,22 +42,19 @@ module.exports = class ThriftTool {
         allowIncludeAlias: true,
         allowFilesystemAccess: true,
       }).toJSON();
-
-      this.result[0] = thriftrw;
-      console.log('--- 第 0 次原始解析结果 ---');
-      console.log(JSON.stringify(this.result[0], undefined, 2));
-
-      const ENTRY_POINT = thriftrw.entryPoint;
-      DEFINITIONS = thriftrw['asts'][ENTRY_POINT]['definitions'];
-      if(!DEFINITIONS) {
-        throw new Error(`解析结果为空: ${JSON.stringify(thriftrw)}`);
-      }
-      this.result[1] = DEFINITIONS;
-      console.log('--- 第 1 次 DEFINITION 解析结果 ---');
-      console.log(JSON.stringify(this.result[1], undefined, 2));
     } catch(e) {
       throw new Error(`语法错误，生成AST失败：${e}`);
     }
+
+    this.result[0] = thriftrw;
+    console.log('--- 第 0 次原始解析结果 ---');
+    console.log(JSON.stringify(this.result[0], undefined, 2));
+
+    const ENTRY_POINT = thriftrw.entryPoint;
+    const DEFINITIONS = thriftrw['asts'][ENTRY_POINT]['definitions'];
+    this.result[1] = DEFINITIONS;
+    console.log('--- 第 1 次 DEFINITION 解析结果 ---');
+    console.log(JSON.stringify(this.result[1], undefined, 2));
 
     DEFINITIONS.forEach(ele => {
       const type = ele.type.toLowerCase();
@@ -90,27 +75,31 @@ module.exports = class ThriftTool {
     console.log('--- 第 3 次解析 resolveDefUnion 结果 ---');
     console.log(JSON.stringify(this.result[3], undefined, 2));
 
-    // 不传具体获取的结构名时处理
-    let res = {};
+    let res = null; // 第4步返回的 json 不再存储到store
     if (!name) {
+      // 不传具体获取的结构名时处理
       ALL_THRIFT_TYPE.forEach(type => {
+        const typeStore = this.getStore()[type];
+        res = res || {};
         res[type] = res[type] || {};
-        Object.keys(this.getStore()[type]).forEach(key => {
-          if (key) {
-            res[type][key] = gen(key)
-          }
-        })
+        if (typeStore) {
+          Object.keys(typeStore).forEach(key => {
+            if (key) {
+              res[type][key] = gen(key)
+            }
+          });
+        }
       });
     } else {
       res = gen(name);
     }
     this.result[4] = res;
     console.log('--- 第 4 次解析 json 结果 ---');
-    console.log(JSON.stringify(this.result[3], undefined, 2));
+    console.log(JSON.stringify(this.result[4], undefined, 2));
     return res;
   }
 
-  // 创建JSON格式的factor
+  // 创建JSON格式的工厂函数
   createJSON() {
     const store = this.getStore();
     const self = this;
@@ -136,7 +125,8 @@ module.exports = class ThriftTool {
     const store = this.getStore();
     let matchedType = null;
     ALL_THRIFT_TYPE.forEach(type => {
-      if (store[type][name] && !matchedType) {
+      if (matchedType) return;
+      if (store[type] && store[type][name]) {
         matchedType = type;
       }
     });
@@ -201,16 +191,17 @@ module.exports = class ThriftTool {
   // store 中 typedef union 基本类型解析替换
   _replaceDefUnionType(gen) {
     const store = this.getStore();
-
     const fn = function(obj) {
-      Object.keys(obj).map(key => {
-        obj[key] = Generator['struct']({
-          syntax: {
-            [key]: obj[key]
-          },
-          gen
-        })[key];
-      });
+      if (obj) {
+        Object.keys(obj).map(key => {
+          obj[key] = Generator['struct']({
+            syntax: {
+              [key]: obj[key]
+            },
+            gen
+          })[key];
+        });
+      }
     }
 
     // typedef
@@ -219,9 +210,11 @@ module.exports = class ThriftTool {
 
     // union
     const theUnion = store['union'];
-    Object.keys(theUnion).map(name => {
-      fn(theUnion[name]);
-    });
+    if (theUnion) {
+      Object.keys(theUnion).map(name => {
+        fn(theUnion[name]);
+      });
+    }
   }
 
   // 特定类型中的 union、typedef 的替换
@@ -269,6 +262,7 @@ module.exports = class ThriftTool {
       };
 
       let preobj = store[type];
+      if (!preobj) return;
       if (type === 'service') {
         // service 处理
         Object.keys(preobj).forEach(serviceName => {
