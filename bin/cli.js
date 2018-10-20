@@ -8,7 +8,7 @@ const ThriftTool = require('../src');
 program
   .version('0.1.0')
   .option('-f, --file <value>', 'thrift file name')
-  .option('-c, --class <value>', 'name of element')
+  .option('-c, --class <value>', 'class of element')
   .option('-o, --output <value>', 'output file name')
   .parse(process.argv);
 

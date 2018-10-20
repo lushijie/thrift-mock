@@ -1,5 +1,5 @@
 const Icon = require('../constants/icon');
-module.exports = function({syntax, gen}) {
+module.exports = function({syntax, thriftTool}) {
   const {
     valueStyle,
     valueType,
@@ -19,7 +19,7 @@ module.exports = function({syntax, gen}) {
       }
       return `${prefix}${valueType}`;
     } else if (valueStyle === 'identifier') {
-      return gen(valueType);
+      return thriftTool.gen(valueType);
     } else if (valueStyle === 'list' || valueStyle === 'set') {
       return [fn(valueType)]
     } else if (valueStyle === 'map') {

@@ -9,10 +9,11 @@ module.exports = class ThriftTool {
   constructor() {
     this.store = {};
     this.result = {};
+    this.gen = this.createGen();
   }
 
-  // 根据类型设置存储，
-  _setStore(type, payload) {
+  // 根据类型设置存储
+  setStore(type, payload) {
     this.store[type] = Utils.extend(this.store[type], payload);
   }
 
@@ -56,7 +57,7 @@ module.exports = class ThriftTool {
       const type = ele.type.toLowerCase();
       const fn = Parser[type];
       if (Utils.isFunction(fn)) {
-          this._setStore(type, fn(ele, this));
+          this.setStore(type, fn(ele, this));
       } else {
         throw new Error(`${type} 类型解析器不存在`);
       }
@@ -64,8 +65,6 @@ module.exports = class ThriftTool {
     this.result[2] = Utils.extend({}, this.getStore());
     console.log('--- 第 2 次解析 ast转化 结果 ---');
     console.log(JSON.stringify(this.result[2], undefined, 2));
-
-    const gen = this.genFactory();
 
     // 最后构建的JSON不再存储到store
     let res = null;
@@ -78,33 +77,33 @@ module.exports = class ThriftTool {
         if (typeStore) {
           Object.keys(typeStore).forEach(key => {
             if (key) {
-              res[type][key] = gen(key)
+              res[type][key] = this.gen(key)
             }
           });
         }
       });
     } else {
-      res = gen(name);
+      res = this.gen(name);
     }
+
     this.result[3] = res;
     console.log('--- 第 3 次解析 json 结果 ---');
     console.log(JSON.stringify(this.result[3], undefined, 2));
     return res;
   }
 
-  // 创建JSON格式的工厂函数
-  genFactory() {
+  // generator
+  createGen() {
     const store = this.getStore();
-    const self = this;
-    return function gen(name) {
-      const type = self.findThriftType(name);
+    return (name) => {
+      const type = this.findThriftType(name);
       if (type) {
         const fn = Generator[type];
         if (Utils.isFunction(fn)) {
           return fn({
             name,
             syntax: store[type][name],
-            gen,
+            thriftTool: this,
           });
         }
         throw new Error(`${type} 类型构造器不存在`);
