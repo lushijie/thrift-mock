@@ -49,9 +49,10 @@ module.exports = class ThriftTool {
         // source: filePath,
         strict: false,
         entryPoint: path.resolve(filePath),
-        allowFilesystemAccess: true,
         allowOptionalArguments: true,
         defaultAsUndefined: false,
+        allowIncludeAlias: true,
+        allowFilesystemAccess: true,
       }).toJSON();
 
       this.result[0] = thriftrw;
