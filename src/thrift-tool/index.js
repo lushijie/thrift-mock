@@ -155,7 +155,7 @@ module.exports = class ThriftTool {
         const fn = Generator[type];
         if (Utils.isFunction(fn)) {
           return fn({
-            name,
+            structName,
             syntax: store[type][structName],
             thriftTool: this,
           });
