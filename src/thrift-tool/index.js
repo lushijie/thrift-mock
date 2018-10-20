@@ -14,6 +14,11 @@ module.exports = class ThriftTool {
 
   // 根据类型设置存储
   setStore(type, payload) {
+    if (!Utils.isString(type)) {
+      payload = type;
+      this.store = Utils.extend(this.store, payload);
+      return;
+    }
     this.store[type] = Utils.extend(this.store[type], payload);
   }
 
@@ -30,11 +35,36 @@ module.exports = class ThriftTool {
     return this.result[step];
   }
 
+  setResult(step, payload) {
+    this.result[step] = Utils.extend({}, payload);
+  }
+
   // 解析
   parse(filePath, name) {
-    let thriftrwJSON;
+    const sourceResult = this.parseSource(filePath);
+    this.setResult(1, sourceResult);
+    console.log('--- 第 1 次解析 origin 结果 ---');
+    console.log(JSON.stringify(this.result[1], undefined, 2));
+
+    const ENTRY_POINT = sourceResult.entryPoint;
+    const DEFINITIONS = sourceResult['asts'][ENTRY_POINT]['definitions'];
+    const definitionResult = this.parseDefinition(DEFINITIONS);
+    this.setStore(definitionResult);
+    this.setResult(2, this.getStore());
+    console.log('--- 第 2 次解析 ast 结果 ---');
+    console.log(JSON.stringify(this.result[2], undefined, 2));
+
+    let res = this.getLastJSON(name);
+    this.setResult(3, res);
+    console.log('--- 第 3 次解析 json 结果 ---');
+    console.log(JSON.stringify(this.result[3], undefined, 2));
+    return res;
+  }
+
+  parseSource(filePath) {
+    let res = null;
     try {
-      thriftrwJSON = new Thriftrw({
+      res = new Thriftrw({
         strict: false,
         entryPoint: path.resolve(filePath),
         allowOptionalArguments: true,
@@ -45,27 +75,24 @@ module.exports = class ThriftTool {
     } catch(e) {
       throw new Error(`语法错误，生成AST失败：${e}`);
     }
+    return res;
+  }
 
-    this.result[1] = thriftrwJSON;
-    console.log('--- 第 1 次原始解析结果 ---');
-    console.log(JSON.stringify(this.result[1], undefined, 2));
-
-    const ENTRY_POINT = thriftrwJSON.entryPoint;
-    const DEFINITIONS = thriftrwJSON['asts'][ENTRY_POINT]['definitions'];
-
-    DEFINITIONS.forEach(ele => {
+  parseDefinition(definition) {
+    const res = {}
+    definition.forEach(ele => {
       const type = ele.type.toLowerCase();
       const fn = Parser[type];
       if (Utils.isFunction(fn)) {
-          this.setStore(type, fn(ele, this));
+        res[type] = Utils.extend(res[type], fn(ele, this));
       } else {
         throw new Error(`${type} 类型解析器不存在`);
       }
     });
-    this.result[2] = Utils.extend({}, this.getStore());
-    console.log('--- 第 2 次解析 ast转化 结果 ---');
-    console.log(JSON.stringify(this.result[2], undefined, 2));
+    return res;
+  }
 
+  getLastJSON(name) {
     // 最后构建的JSON不再存储到store
     let res = null;
     if (!name) {
@@ -85,10 +112,6 @@ module.exports = class ThriftTool {
     } else {
       res = this.gen(name);
     }
-
-    this.result[3] = res;
-    console.log('--- 第 3 次解析 json 结果 ---');
-    console.log(JSON.stringify(this.result[3], undefined, 2));
     return res;
   }
 
