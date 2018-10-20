@@ -10,6 +10,8 @@ module.exports = class ThriftTool {
     this.store = {};
     this.result = {};
     this.gen = this.createGen();
+    this.includeFile = {};
+    this.includeAlias = {};
   }
 
   // 根据类型设置存储
@@ -44,9 +46,24 @@ module.exports = class ThriftTool {
     const sourceResult = this.parseSource(filePath);
     this.setResult(1, sourceResult);
     console.log('--- 第 1 次解析 origin 结果 ---');
-    console.log(JSON.stringify(this.result[1], undefined, 2));
+    // console.log(JSON.stringify(this.result[1], undefined, 2));
 
     const ENTRY_POINT = sourceResult.entryPoint;
+    Object.keys(sourceResult.asts).forEach(fileName => {
+      const ast = sourceResult['asts'][fileName];
+      if (fileName !== ENTRY_POINT) {
+        this.includeFile[path.parse(fileName).name] = this.parseDefinition(ast['definitions']);
+      }
+
+      if (ast.headers.length > 0) {
+        ast.headers.forEach(ele => {
+          if (ele.namespace) {
+            this.includeAlias[ele.namespace.name] = path.parse(ele.id).name;
+          }
+        });
+      }
+    });
+
     const DEFINITIONS = sourceResult['asts'][ENTRY_POINT]['definitions'];
     const definitionResult = this.parseDefinition(DEFINITIONS);
     this.setStore(definitionResult);
