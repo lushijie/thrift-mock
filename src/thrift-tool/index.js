@@ -12,6 +12,7 @@ module.exports = class ThriftTool {
     this.gen = this.createGen();
     this.includeFile = {};
     this.includeAlias = {};
+    this.includeStack = [];
   }
 
   // 根据类型设置存储
@@ -49,6 +50,7 @@ module.exports = class ThriftTool {
     // console.log(JSON.stringify(this.result[1], undefined, 2));
 
     const ENTRY_POINT = sourceResult.entryPoint;
+    this.includeStack.push(path.parse(ENTRY_POINT).name);
     Object.keys(sourceResult.asts).forEach(fileName => {
       const ast = sourceResult['asts'][fileName];
       fileName = path.parse(fileName).name;
@@ -136,19 +138,23 @@ module.exports = class ThriftTool {
 
   // generator
   createGen() {
-    let store = this.getStore();
     return (name) => {
-      let type = null;
       let structName = name;
 
       // include, .的特殊处理，这里可能有问题，不一定是include, 也可能是const 之类
       if (name.indexOf('.') > -1) {
-        const includeName = this.includeAlias[name.split('.')[0]];
-        store = this.includeFile[includeName];
+        this.includeStack.push(this.includeAlias[name.split('.')[0]]);
         structName = name.split('.')[1];
-        type = this.findThriftType(structName, this.includeFile[includeName]);
-      } else {
-        type = this.findThriftType(name);
+      }
+
+      let store = this.includeFile[this.includeStack.slice().pop()];
+      let type = this.findThriftType(structName, store);
+
+      // include 堆栈导致一些结构名需要遍历所有的thrift file
+      while(this.includeStack.length && !type && name.indexOf('.') === -1) {
+        this.includeStack.pop();
+        store = this.includeFile[this.includeStack.slice().pop()];
+        type = this.findThriftType(structName, store);
       }
 
       if (type) {
