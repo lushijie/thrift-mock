@@ -9,7 +9,6 @@ module.exports = class ThriftTool {
   constructor() {
     this.store = {};
     this.result = {};
-    this.gen = this.createGen();
     this.includeFile = {};
     this.includeAlias = {};
     this.includeStack = [];
@@ -30,7 +29,7 @@ module.exports = class ThriftTool {
     return this.store;
   }
 
-  // 获取第N步的解析结果
+  // 获取第 N 步解析结果
   getResult(step) {
     if (!step) {
       return this.result;
@@ -38,106 +37,12 @@ module.exports = class ThriftTool {
     return this.result[step];
   }
 
+  // 设置第 N 步解析结果
   setResult(step, payload) {
     this.result[step] = Utils.extend({}, payload);
   }
 
-  // 解析
-  parse(filePath, name) {
-    const sourceResult = this.parseSource(filePath);
-    this.setResult(1, sourceResult);
-    console.log('--- 第 1 次解析 origin 结果 ---');
-    // console.log(JSON.stringify(this.result[1], undefined, 2));
-
-    const ENTRY_POINT = sourceResult.entryPoint;
-    this.includeStack.push(path.parse(ENTRY_POINT).name);
-    Object.keys(sourceResult.asts).forEach(fileName => {
-      const ast = sourceResult['asts'][fileName];
-      fileName = path.parse(fileName).name;
-      this.includeFile[fileName] = this.parseDefinition(ast['definitions']);
-      this.includeAlias[fileName] = fileName;
-
-      if (ast.headers.length > 0) {
-        ast.headers.forEach(ele => {
-          if (ele.namespace) {
-            this.includeAlias[ele.namespace.name] = path.parse(ele.id).name;
-          }
-        });
-      } else {
-        this.includeAlias[fileName] = fileName;
-      }
-    });
-
-    const DEFINITIONS = sourceResult['asts'][ENTRY_POINT]['definitions'];
-    const definitionResult = this.parseDefinition(DEFINITIONS);
-    this.setStore(definitionResult);
-    this.setResult(2, this.getStore());
-    console.log('--- 第 2 次解析 ast 结果 ---');
-    console.log(JSON.stringify(this.result[2], undefined, 2));
-
-    let res = this.getLastJSON(name);
-    this.setResult(3, res);
-    console.log('--- 第 3 次解析 json 结果 ---');
-    console.log(JSON.stringify(this.result[3], undefined, 2));
-    return res;
-  }
-
-  parseSource(filePath) {
-    let res = null;
-    try {
-      res = new Thriftrw({
-        strict: false,
-        entryPoint: path.resolve(filePath),
-        allowOptionalArguments: true,
-        defaultAsUndefined: false,
-        allowIncludeAlias: true,
-        allowFilesystemAccess: true,
-      }).toJSON();
-    } catch(e) {
-      throw new Error(`语法错误，生成AST失败：${e}`);
-    }
-    return res;
-  }
-
-  parseDefinition(definition) {
-    const res = {}
-    definition.forEach(ele => {
-      const type = ele.type.toLowerCase();
-      const fn = Parser[type];
-      if (Utils.isFunction(fn)) {
-        res[type] = Utils.extend(res[type], fn(ele, this));
-      } else {
-        throw new Error(`${type} 类型解析器不存在`);
-      }
-    });
-    return res;
-  }
-
-  getLastJSON(name) {
-    // 最后构建的JSON不再存储到store
-    let res = null;
-    if (!name) {
-      // 不传具体获取的结构名时，全量扫描
-      ALL_THRIFT_TYPE.forEach(type => {
-        const typeStore = this.getStore()[type];
-        res = res || {};
-        res[type] = res[type] || {};
-        if (typeStore) {
-          Object.keys(typeStore).forEach(key => {
-            if (key) {
-              res[type][key] = this.gen(key)
-            }
-          });
-        }
-      });
-    } else {
-      res = this.gen(name);
-    }
-    return res;
-  }
-
-  // generator
-  createGen() {
+  get gen() {
     return (name) => {
       let structName = name;
 
@@ -237,5 +142,91 @@ module.exports = class ThriftTool {
         }
       });
     }
+  }
+
+  // parse definition
+  parseDefinition(definition) {
+    const res = {}
+    definition.forEach(ele => {
+      const type = ele.type.toLowerCase();
+      const fn = Parser[type];
+      if (Utils.isFunction(fn)) {
+        res[type] = Utils.extend(res[type], fn(ele, this));
+      } else {
+        throw new Error(`${type} 类型解析器不存在`);
+      }
+    });
+    return res;
+  }
+
+  // 根据 name 获取最后的 JSON
+  getJsonByName(name) {
+    // 最后构建的JSON不再存储到store
+    let res = null;
+    if (!name) {
+      // 不传具体获取的结构名时，全量扫描
+      ALL_THRIFT_TYPE.forEach(type => {
+        const typeStore = this.getStore()[type];
+        res = res || {};
+        res[type] = res[type] || {};
+        if (typeStore) {
+          Object.keys(typeStore).forEach(key => {
+            if (key) {
+              res[type][key] = this.gen(key)
+            }
+          });
+        }
+      });
+    } else {
+      res = this.gen(name);
+    }
+    return res;
+  }
+
+  // parse start
+  parse(filePath, name) {
+    const sourceResult = new Thriftrw({
+      strict: false,
+      entryPoint: path.resolve(filePath),
+      allowOptionalArguments: true,
+      defaultAsUndefined: false,
+      allowIncludeAlias: true,
+      allowFilesystemAccess: true,
+    }).toJSON();
+    this.setResult(1, sourceResult);
+    console.log('--- 第 1 次解析 origin 结果 ---');
+    // console.log(JSON.stringify(this.result[1], undefined, 2));
+
+    const ENTRY_POINT = sourceResult.entryPoint;
+    this.includeStack.push(path.parse(ENTRY_POINT).name);
+    Object.keys(sourceResult.asts).forEach(fileName => {
+      const ast = sourceResult['asts'][fileName];
+      fileName = path.parse(fileName).name;
+      this.includeFile[fileName] = this.parseDefinition(ast['definitions']);
+      this.includeAlias[fileName] = fileName;
+
+      if (ast.headers.length > 0) {
+        ast.headers.forEach(ele => {
+          if (ele.namespace) {
+            this.includeAlias[ele.namespace.name] = path.parse(ele.id).name;
+          }
+        });
+      } else {
+        this.includeAlias[fileName] = fileName;
+      }
+    });
+
+    const DEFINITIONS = sourceResult['asts'][ENTRY_POINT]['definitions'];
+    const definitionResult = this.parseDefinition(DEFINITIONS);
+    this.setStore(definitionResult);
+    this.setResult(2, this.getStore());
+    console.log('--- 第 2 次解析 ast 结果 ---');
+    console.log(JSON.stringify(this.result[2], undefined, 2));
+
+    let res = this.getJsonByName(name);
+    this.setResult(3, res);
+    console.log('--- 第 3 次解析 json 结果 ---');
+    console.log(JSON.stringify(this.result[3], undefined, 2));
+    return res;
   }
 }
