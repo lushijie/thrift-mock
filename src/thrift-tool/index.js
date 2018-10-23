@@ -24,11 +24,6 @@ module.exports = class ThriftTool {
     this.store[type] = Utils.extend(this.store[type], payload);
   }
 
-  // 获取存储空间
-  getStore() {
-    return this.store;
-  }
-
   // 获取第 N 步解析结果
   getResult(step) {
     if (!step) {
@@ -46,7 +41,8 @@ module.exports = class ThriftTool {
     return (name) => {
       let structName = name;
 
-      // include, .的特殊处理，这里可能有问题，不一定是include, 也可能是const 之类
+      // include, .的特殊处理，
+      // 这里可能有问题，不一定是include, 也可能是const 之类
       if (name.indexOf('.') > -1) {
         this.includeStack.push(this.includeAlias[name.split('.')[0]]);
         structName = name.split('.')[1];
@@ -78,7 +74,7 @@ module.exports = class ThriftTool {
   }
 
   // 查找 thrift 类型
-  findThriftType(name, store = this.getStore()) {
+  findThriftType(name, store = this.store) {
     let matchedType = null;
     ALL_THRIFT_TYPE.forEach(type => {
       if (matchedType) return;
@@ -160,13 +156,13 @@ module.exports = class ThriftTool {
   }
 
   // 根据 name 获取最后的 JSON
+  // 最后构建的JSON不再存储到store
   getJsonByName(name) {
-    // 最后构建的JSON不再存储到store
     let res = null;
     if (!name) {
       // 不传具体获取的结构名时，全量扫描
       ALL_THRIFT_TYPE.forEach(type => {
-        const typeStore = this.getStore()[type];
+        const typeStore = this.store[type];
         res = res || {};
         res[type] = res[type] || {};
         if (typeStore) {
@@ -183,7 +179,7 @@ module.exports = class ThriftTool {
     return res;
   }
 
-  // parse start
+  // entry
   parse(filePath, name) {
     const sourceResult = new Thriftrw({
       strict: false,
@@ -194,7 +190,7 @@ module.exports = class ThriftTool {
       allowFilesystemAccess: true,
     }).toJSON();
     this.setResult(1, sourceResult);
-    console.log('--- 第 1 次解析 origin 结果 ---');
+    // console.log('--- 第 1 次解析 origin 结果 ---');
     // console.log(JSON.stringify(this.result[1], undefined, 2));
 
     const ENTRY_POINT = sourceResult.entryPoint;
@@ -204,29 +200,26 @@ module.exports = class ThriftTool {
       fileName = path.parse(fileName).name;
       this.includeFile[fileName] = this.parseDefinition(ast['definitions']);
       this.includeAlias[fileName] = fileName;
-
       if (ast.headers.length > 0) {
         ast.headers.forEach(ele => {
           if (ele.namespace) {
             this.includeAlias[ele.namespace.name] = path.parse(ele.id).name;
           }
         });
-      } else {
-        this.includeAlias[fileName] = fileName;
       }
     });
 
     const DEFINITIONS = sourceResult['asts'][ENTRY_POINT]['definitions'];
     const definitionResult = this.parseDefinition(DEFINITIONS);
     this.setStore(definitionResult);
-    this.setResult(2, this.getStore());
-    console.log('--- 第 2 次解析 ast 结果 ---');
-    console.log(JSON.stringify(this.result[2], undefined, 2));
+    this.setResult(2, this.store);
+    // console.log('--- 第 2 次解析 ast 结果 ---');
+    // console.log(JSON.stringify(this.result[2], undefined, 2));
 
     let res = this.getJsonByName(name);
     this.setResult(3, res);
-    console.log('--- 第 3 次解析 json 结果 ---');
-    console.log(JSON.stringify(this.result[3], undefined, 2));
+    // console.log('--- 第 3 次解析 json 结果 ---');
+    // console.log(JSON.stringify(this.result[3], undefined, 2));
     return res;
   }
 }
