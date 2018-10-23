@@ -27,7 +27,7 @@ const outputPath = path.resolve(program.output || `${path.parse(filePath).name}.
 
 const res = thriftTool.parse(filePath, program.class);
 if (res) {
-  console.log(chalk.green(`✔︎ 编译成功，输出文件 ${outputPath}`));
+  console.log(chalk.green(`✔︎ 编译成功 ${outputPath}`));
   fs.writeFileSync(outputPath, JSON.stringify(res, undefined, 2), 'utf8');
 }
 

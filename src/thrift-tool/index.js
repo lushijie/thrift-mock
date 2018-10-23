@@ -2,7 +2,7 @@ const path = require('path');
 const Utils = require('@lushijie/utils');
 const Parser = require('../parser');
 const Generator = require('../generator');
-const Thriftrw = require('thriftrw').Thrift;
+const Thriftrw = require('@lushijie/thriftrw').Thrift;
 const ALL_THRIFT_TYPE = require('../constants/type');
 
 module.exports = class ThriftTool {

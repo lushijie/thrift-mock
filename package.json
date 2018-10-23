@@ -12,11 +12,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@lushijie/thriftrw": "^3.11.2",
     "@lushijie/utils": "^1.0.0",
     "chalk": "^2.4.1",
     "commander": "^2.19.0",
     "core-util-is": "^1.0.2",
-    "node-thrift-parser": "^0.1.3",
-    "thriftrw": "^3.11.2"
+    "node-thrift-parser": "^0.1.3"
   }
 }
