@@ -11,15 +11,14 @@
 
 `tjson -f xx.thrift`
 
-<div>
+<p>
   <img src="https://p1.meituan.net/travelcube/8b51c3be2a96410715ebd7cb0ae2a3e7333868.png" width="400">
-</div>
-
+</p>
 
 `tjson -f a.thrift -c User`
-<div>
+<p>
   <img src="https://p0.meituan.net/travelcube/5612b6fc9ff31003fadddf47a161776f158521.png" width="400">
-</div>
+</p>
 
 
 
