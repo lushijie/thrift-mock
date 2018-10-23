@@ -7,7 +7,7 @@
     "tjson": "bin/cli.js"
   },
   "scripts": {
-    "test": "node demo/main.js"
+    "test": "bin/cli.js -f ./demo/test.thrift -o ./demo/test.json"
   },
   "author": "",
   "license": "ISC",

@@ -1,0 +1,107 @@
+{
+  "const": {
+    "PI": 3.14,
+    "FOOD_TYPE_MAP": [
+      {
+        "1": [
+          1,
+          2
+        ]
+      },
+      {
+        "2": [
+          2,
+          3
+        ]
+      }
+    ]
+  },
+  "enum": {
+    "SEX": "➤ 1⍮MALE"
+  },
+  "exception": {
+    "InvalidOperation": {
+      "errno": "◎ i32",
+      "errmsg": "◎ string"
+    }
+  },
+  "service": {
+    "Service1": {
+      "ping1": {
+        "returns": "◎ void",
+        "arguments": {
+          "arg": {
+            "☆ a": "◎ i32",
+            "☆ b": "◎ string"
+          }
+        }
+      }
+    },
+    "Service2": {
+      "ping2": {
+        "returns": "◎ void",
+        "arguments": {
+          "num1": "◎ i32"
+        },
+        "throws": null
+      },
+      "add": {
+        "returns": "◎ i32",
+        "arguments": {
+          "u": {
+            "id": "◎ i32",
+            "name": "◎ string",
+            "s": "➤ 1⍮MALE"
+          }
+        },
+        "throws": null
+      },
+      "get": {
+        "returns": [
+          {
+            "id": "◎ i32",
+            "name": "◎ string",
+            "s": "➤ 1⍮MALE"
+          }
+        ],
+        "arguments": {
+          "name": "◎ string"
+        },
+        "throws": null
+      },
+      "ping1": {
+        "returns": "◎ void",
+        "arguments": {
+          "arg": {
+            "☆ a": "◎ i32",
+            "☆ b": "◎ string"
+          }
+        }
+      }
+    }
+  },
+  "struct": {
+    "User": {
+      "id": "◎ i32",
+      "name": "◎ string",
+      "s": "➤ 1⍮MALE"
+    }
+  },
+  "typedef": {
+    "MyInt": "◎ i32",
+    "MyString": "◎ string",
+    "UserList": [
+      {
+        "id": "◎ i32",
+        "name": "◎ string",
+        "s": "➤ 1⍮MALE"
+      }
+    ]
+  },
+  "union": {
+    "ARG1": {
+      "☆ a": "◎ i32",
+      "☆ b": "◎ string"
+    }
+  }
+}
