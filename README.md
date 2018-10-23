@@ -9,15 +9,9 @@
 
   thrift-json 就是一个根据 .thrift 文件生成数据结构的工具：
 
-`tjson -f xx.thrift`
-
-<p>
-  <img src="https://p1.meituan.net/travelcube/8b51c3be2a96410715ebd7cb0ae2a3e7333868.png" width="400">
-</p>
-
 `tjson -f a.thrift -c User`
 <p>
-  <img src="https://p0.meituan.net/travelcube/5612b6fc9ff31003fadddf47a161776f158521.png" width="400">
+  <img src="https://p0.meituan.net/travelcube/5612b6fc9ff31003fadddf47a161776f158521.png">
 </p>
 
 
