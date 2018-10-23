@@ -18,7 +18,7 @@
 
 ## 特性
   * 支持 const、enum、typedef、struct、exception、union、service 基本类型
-  * 支持多层数据类型的嵌套，
+  * 支持多层数据类型的嵌套
   * 支持多层数据结构的嵌套
   * 支持 include thrift文件
   * 支持 service extend
