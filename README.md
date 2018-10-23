@@ -57,3 +57,11 @@ const thriftTool = require('lushijie@thrift-json');
 const res = thriftTool.parse('a.thrift', 'User');
 console.log(res);
 ```
+
+## 相关问题
+1. [https://github.com/thriftrw/thriftrw-node/issues/162](https://github.com/thriftrw/thriftrw-node/issues/162)
+2. [https://github.com/thriftrw/thriftrw-node/issues/163](https://github.com/thriftrw/thriftrw-node/issues/163)
+
+第三方库暂时还没有解决上述问题，所以 fork 了一个，暂时做了兼容处理
+
+
