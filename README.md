@@ -3,7 +3,7 @@
 ##  为什么写这样一个东西？
 
   起初是想根据 .thrift 数据生成 mock 数据，但是后来发现 mock 数据对语义化要求很高，例如一个菜品的分类，如果简单的返回随机的几个中文汉字就完全失去了可读性，其实可以为字段指定语义，但是当面对几十个字段时，指定语义貌似又成了一个繁琐的工作。
-  最终放弃 mock 语义化的数据的想法...
+  最终放弃 mock 语义化的数据的想法......
 
   但是在 mock 的过程中其实还有一个工作，就是根据 .thrift 先获取到数据结构，这是制造 mock 数据的前提， 所以就有了 thrift-json。
 
@@ -24,11 +24,11 @@
 
 
 ## 特性
-  支持 const、enum、struct、exception、union、service 基本类型
-  支持多层数据类型的嵌套，
-  支持多层数据结构的嵌套
-  支持 include thrift文件
-  支持 service extend
+  * 支持 const、enum、typedef、struct、exception、union、service 基本类型
+  * 支持多层数据类型的嵌套，
+  * 支持多层数据结构的嵌套
+  * 支持 include thrift文件
+  * 支持 service extend
 
 ## 标识
 
@@ -51,10 +51,10 @@ npm install lushijie@thrift-json -g
 或
 `tjson -f a.thrift -c User -o b.json`
 
-  tjson 参数：
-	  -f 要编译的thrift文件，包含后缀
-	  -c 要获取的结构名，默认全部结构
-	  -o 重定向文件输出，包含后缀，默认当前目录，thrift的文件名
+tjson 参数：
+* -f 要编译的thrift文件，包含后缀
+* -c 要获取的结构名，默认全部结构
+* -o 重定向文件输出，包含后缀，默认当前目录，thrift的文件名
 
 #### 2. node 调用
 npm install lushijie@thrift-json --save
