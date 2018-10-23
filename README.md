@@ -14,8 +14,6 @@
   <img src="https://p0.meituan.net/travelcube/5612b6fc9ff31003fadddf47a161776f158521.png">
 </p>
 
-
-
 ## 特性
   * 支持 const、enum、typedef、struct、exception、union、service 基本类型
   * 支持多层数据类型的嵌套
@@ -57,6 +55,10 @@ const thriftTool = require('lushijie@thrift-json');
 const res = thriftTool.parse('a.thrift', 'User');
 console.log(res);
 ```
+
+## 架构设计
+
+// todo...
 
 ## 相关问题
 1. [https://github.com/thriftrw/thriftrw-node/issues/162](https://github.com/thriftrw/thriftrw-node/issues/162)
