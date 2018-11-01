@@ -5,5 +5,5 @@ module.exports = {
   service: require('./processor/service'),
   struct: require('./processor/struct'),
   typedef: require('./processor/typedef'),
-  union: require('./processor/union'),
-}
+  union: require('./processor/union')
+};

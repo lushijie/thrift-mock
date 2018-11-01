@@ -52,7 +52,7 @@ module.exports = class ThriftTool {
       let type = this.findThriftType(structName, store);
 
       // include 堆栈导致一些结构名需要遍历所有的thrift file
-      while(this.includeStack.length && !type && name.indexOf('.') === -1) {
+      while (this.includeStack.length && !type && name.indexOf('.') === -1) {
         this.includeStack.pop();
         store = this.includeFile[this.includeStack.slice().pop()];
         type = this.findThriftType(structName, store);
@@ -64,13 +64,13 @@ module.exports = class ThriftTool {
           return fn({
             structName,
             syntax: store[type][structName],
-            thriftTool: this,
+            thriftTool: this
           });
         }
         throw new Error(`${type} 类型构造器不存在`);
       }
       throw new Error(`${name} 未在 thrift 定义中找到`);
-    }
+    };
   }
 
   // 查找 thrift 类型
@@ -99,14 +99,14 @@ module.exports = class ThriftTool {
       return {
         valueStyle,
         valueType: valueType.name
-      }
+      };
     }
 
     if (valueStyle === 'set' || valueStyle === 'list') {
       return {
         valueStyle,
         valueType: this.resolveMixType(valueType.valueType)
-      }
+      };
     }
 
     if (valueStyle === 'map') {
@@ -114,7 +114,7 @@ module.exports = class ThriftTool {
         valueStyle,
         keyType: this.resolveMixType(valueType.keyType),
         valueType: this.resolveMixType(valueType.valueType)
-      }
+      };
     }
   }
 
@@ -135,14 +135,14 @@ module.exports = class ThriftTool {
       return value.entries.map(ele => {
         return {
           [ele.key.value]: this.resolveMixValue(ele.value)
-        }
+        };
       });
     }
   }
 
   // parse definition
   parseDefinition(definition) {
-    const res = {}
+    const res = {};
     definition.forEach(ele => {
       const type = ele.type.toLowerCase();
       const fn = Parser[type];
@@ -168,7 +168,7 @@ module.exports = class ThriftTool {
         if (typeStore) {
           Object.keys(typeStore).forEach(key => {
             if (key) {
-              res[type][key] = this.gen(key)
+              res[type][key] = this.gen(key);
             }
           });
         }
@@ -187,11 +187,12 @@ module.exports = class ThriftTool {
       allowOptionalArguments: true,
       defaultAsUndefined: false,
       allowIncludeAlias: true,
-      allowFilesystemAccess: true,
+      allowFilesystemAccess: true
     }).toJSON();
     this.setResult(1, sourceResult);
     // console.log('--- 第 1 次解析 origin 结果 ---');
     // console.log(JSON.stringify(this.result[1], undefined, 2));
+    // return;
 
     const ENTRY_POINT = sourceResult.entryPoint;
     this.includeStack.push(path.parse(ENTRY_POINT).name);
@@ -216,10 +217,10 @@ module.exports = class ThriftTool {
     // console.log('--- 第 2 次解析 ast 结果 ---');
     // console.log(JSON.stringify(this.result[2], undefined, 2));
 
-    let res = this.getJsonByName(name);
+    const res = this.getJsonByName(name);
     this.setResult(3, res);
     // console.log('--- 第 3 次解析 json 结果 ---');
     // console.log(JSON.stringify(this.result[3], undefined, 2));
     return res;
   }
-}
+};

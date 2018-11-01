@@ -5,7 +5,7 @@ module.exports = function structGen({syntax, thriftTool}) {
     res[key] = Base({
       syntax: syntax[key],
       thriftTool
-    })
+    });
   });
   return res;
-}
+};

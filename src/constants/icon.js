@@ -4,4 +4,4 @@ module.exports = {
   optional: '☆',
   enum: '➤',
   enum_or: '⍮'
-}
+};

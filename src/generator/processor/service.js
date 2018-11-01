@@ -8,20 +8,20 @@ module.exports = function({syntax, thriftTool}) {
     res[key] = {
       returns: Base({
         syntax: syntax.service[key]['returns'],
-        thriftTool,
+        thriftTool
       }),
 
       arguments: Struct({
         syntax: syntax.service[key]['arguments'],
-        thriftTool,
+        thriftTool
       }),
 
       // objectToPair 将 1:InvalidOperation e 把 e 名字过滤掉
       throws: syntax.service[key]['throws'] && Utils.objectToPairs(Struct({
         syntax: syntax.service[key]['throws'],
-        thriftTool,
+        thriftTool
       }))[0][1]
-    }
+    };
   });
 
   if (syntax.baseService) {
@@ -29,4 +29,4 @@ module.exports = function({syntax, thriftTool}) {
   }
 
   return res;
-}
+};

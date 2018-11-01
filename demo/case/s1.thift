@@ -1,4 +1,12 @@
+
 typedef list<User> UserList
+
+const i32 NUM = 1234;
+enum TweetType {
+  A,
+  B,
+  C = 2
+}
 
 struct User {
   1: required i32 id,
@@ -6,5 +14,5 @@ struct User {
 }
 
 service UserService {
-  UserList getUser(1:string name)
+  TweetType getUser(1:string name)
 }

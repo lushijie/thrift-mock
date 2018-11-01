@@ -9,4 +9,4 @@ module.exports = function(ast, thriftTool) {
     res[identifier][key] = ele.value === null ? key : ele.value.value;
   });
   return res;
-}
+};

@@ -21,13 +21,13 @@ module.exports = function({syntax, thriftTool}) {
     } else if (valueStyle === 'identifier') {
       return thriftTool.gen(valueType);
     } else if (valueStyle === 'list' || valueStyle === 'set') {
-      return [fn(valueType)]
+      return [fn(valueType)];
     } else if (valueStyle === 'map') {
       return {
         [fn(keyType)]: fn(valueType)
-      }
+      };
     }
   }
 
   return fn({valueStyle, valueType, keyType});
-}
+};

@@ -6,4 +6,4 @@ module.exports = [
   'struct',
   'typedef',
   'union'
-]
+];

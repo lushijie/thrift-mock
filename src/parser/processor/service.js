@@ -5,7 +5,7 @@ module.exports = function(ast, thriftTool) {
 
   res[identifier] = {
     baseService: null,
-    service: {},
+    service: {}
   };
 
   if (ast.baseService) {
@@ -13,7 +13,7 @@ module.exports = function(ast, thriftTool) {
       // 与 struct 结构保持统一，使用valueStyle、valueType
       valueStyle: ast.baseService.type.toLowerCase(), // 等于 identifier
       valueType: ast.baseService.name
-    }
+    };
   }
 
   ast.functions.forEach(ele => {
@@ -22,7 +22,7 @@ module.exports = function(ast, thriftTool) {
       arguments: null,
       returns: null,
       throws: null,
-      oneway: ele.oneway,
+      oneway: ele.oneway
     };
 
     field.returns = thriftTool.resolveMixType(ele.returns);
@@ -30,9 +30,9 @@ module.exports = function(ast, thriftTool) {
     field.throws = ele.throws && ele.throws.map(ele => {
       return {
         [ele.name]: thriftTool.resolveMixType(ele.valueType)
-      }
+      };
     })[1]; // 0 为 success 结构， 1 为 error 结构
     res[identifier]['service'][key] = field;
   });
   return res;
-}
+};

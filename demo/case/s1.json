@@ -1,4 +1,35 @@
 {
-  "id": "★ i32",
-  "name": "☆ string"
+  "const": {
+    "NUM": 1234
+  },
+  "enum": {
+    "TweetType": "➤ A⍮B⍮2"
+  },
+  "exception": {},
+  "service": {
+    "UserService": {
+      "getUser": {
+        "returns": "➤ A⍮B⍮2",
+        "arguments": {
+          "name": "◎ string"
+        },
+        "throws": null
+      }
+    }
+  },
+  "struct": {
+    "User": {
+      "id": "★ i32",
+      "name": "☆ string"
+    }
+  },
+  "typedef": {
+    "UserList": [
+      {
+        "id": "★ i32",
+        "name": "☆ string"
+      }
+    ]
+  },
+  "union": {}
 }

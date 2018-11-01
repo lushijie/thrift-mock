@@ -11,8 +11,8 @@ module.exports = function(ast, thriftTool) {
       valueType: null,
       defaultValue: null,
       optional: ele.optional,
-      required: ele.required,
-    }
+      required: ele.required
+    };
 
     // // 默认值，目前仅支持常量，有待加强; 暂不支持 defaultValue
     // if (ele.defaultValue) {
@@ -24,4 +24,4 @@ module.exports = function(ast, thriftTool) {
   });
 
   return res;
-}
+};
