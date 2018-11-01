@@ -10,8 +10,8 @@ module.exports = function(ast, thriftTool) {
 
   if (ast.baseService) {
     res[identifier].baseService = {
-      // 与 struct 结构保持统一，使用valueStyle、valueType
-      valueStyle: ast.baseService.type.toLowerCase(), // 等于 identifier
+      // 为了与 struct 结构保持统一，使用valueStyle、valueType
+      valueStyle: ast.baseService.type.toLowerCase(),
       valueType: ast.baseService.name
     };
   }

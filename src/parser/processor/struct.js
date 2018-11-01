@@ -14,7 +14,7 @@ module.exports = function(ast, thriftTool) {
       required: ele.required
     };
 
-    // // 默认值，目前仅支持常量，有待加强; 暂不支持 defaultValue
+    // 暂不支持 defaultValue
     // if (ele.defaultValue) {
     //   field.defaultValue = thriftTool.resolveMixValue(ele.defaultValue);
     // }

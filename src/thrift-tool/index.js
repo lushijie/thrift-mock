@@ -9,9 +9,9 @@ module.exports = class ThriftTool {
   constructor() {
     this.store = {};
     this.result = {};
-    this.includeFile = {};
-    this.includeAlias = {};
-    this.includeStack = [];
+    this.includeFile = {}; // includeFile ast content
+    this.includeAlias = {}; // include 文件别名映射
+    this.includeStack = []; // 当前 include 堆栈情况
   }
 
   // 根据类型设置存储
@@ -37,12 +37,12 @@ module.exports = class ThriftTool {
     this.result[step] = Utils.extend({}, payload);
   }
 
+  // 根据 AST 创建 JSON 结构
   get gen() {
     return (name) => {
       let structName = name;
 
-      // include, .的特殊处理，
-      // 这里可能有问题，不一定是include, 也可能是const 之类
+      // include . 的特殊处理
       if (name.indexOf('.') > -1) {
         this.includeStack.push(this.includeAlias[name.split('.')[0]]);
         structName = name.split('.')[1];
@@ -51,7 +51,7 @@ module.exports = class ThriftTool {
       let store = this.includeFile[this.includeStack.slice().pop()];
       let type = this.findThriftType(structName, store);
 
-      // include 堆栈导致一些结构名需要遍历所有的thrift file
+      // include 堆栈导致一些结构名需要遍历所有的 thrift file
       while (this.includeStack.length && !type && name.indexOf('.') === -1) {
         this.includeStack.pop();
         store = this.includeFile[this.includeStack.slice().pop()];
@@ -67,9 +67,9 @@ module.exports = class ThriftTool {
             thriftTool: this
           });
         }
-        throw new Error(`${type} 类型构造器不存在`);
+        throw new Error(`${type} 类型的构造器在 generator 中不存在`);
       }
-      throw new Error(`${name} 未在 thrift 定义中找到`);
+      throw new Error(`${name} 未在 thrift ast 语法书中搜寻到`);
     };
   }
 
@@ -140,7 +140,7 @@ module.exports = class ThriftTool {
     }
   }
 
-  // parse definition
+  // 解析 definition
   parseDefinition(definition) {
     const res = {};
     definition.forEach(ele => {
@@ -149,18 +149,16 @@ module.exports = class ThriftTool {
       if (Utils.isFunction(fn)) {
         res[type] = Utils.extend(res[type], fn(ele, this));
       } else {
-        throw new Error(`${type} 类型解析器不存在`);
+        throw new Error(`${type} 类型解析器在 parser 中不存在`);
       }
     });
     return res;
   }
 
-  // 根据 name 获取最后的 JSON
-  // 最后构建的JSON不再存储到store
-  getJsonByName(name) {
+  // 根据 name 获取最后的 JSON，构建结果不再存储到store
+  getJSONByName(name) {
     let res = null;
-    if (!name) {
-      // 不传具体获取的结构名时，全量扫描
+    if (!name) { // 不传具体获取的结构名时，全量扫描
       ALL_THRIFT_TYPE.forEach(type => {
         const typeStore = this.store[type];
         res = res || {};
@@ -179,7 +177,7 @@ module.exports = class ThriftTool {
     return res;
   }
 
-  // entry
+  // 入口
   parse(filePath, name) {
     const sourceResult = new Thriftrw({
       strict: false,
@@ -192,7 +190,6 @@ module.exports = class ThriftTool {
     this.setResult(1, sourceResult);
     // console.log('--- 第 1 次解析 origin 结果 ---');
     // console.log(JSON.stringify(this.result[1], undefined, 2));
-    // return;
 
     const ENTRY_POINT = sourceResult.entryPoint;
     this.includeStack.push(path.parse(ENTRY_POINT).name);
@@ -217,7 +214,7 @@ module.exports = class ThriftTool {
     // console.log('--- 第 2 次解析 ast 结果 ---');
     // console.log(JSON.stringify(this.result[2], undefined, 2));
 
-    const res = this.getJsonByName(name);
+    const res = this.getJSONByName(name);
     this.setResult(3, res);
     // console.log('--- 第 3 次解析 json 结果 ---');
     // console.log(JSON.stringify(this.result[3], undefined, 2));

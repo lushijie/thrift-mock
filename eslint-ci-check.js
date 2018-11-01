@@ -1,3 +1,5 @@
+// code from https://www.jianshu.com/p/072a96633479
+
 /* eslint-disable */
 const exec = require('child_process').exec;
 const CLIEngine = require('eslint').CLIEngine;
