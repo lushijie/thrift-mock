@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 
+/* eslint-disable */
 const fs = require('fs');
-const path = require("path");
+const path = require('path');
 const program = require('commander');
 const chalk = require('chalk');
 const ThriftTool = require('../src');
@@ -18,6 +19,7 @@ if (!program.file) {
 }
 
 const filePath = path.resolve(program.file);
+console.log(filePath);
 if (!fs.existsSync(filePath)) {
   return console.log(chalk.red('✘ 输入的 .thrift 文件不存在，请检查所输入路径'));;
 }
@@ -30,4 +32,3 @@ if (res) {
   console.log(chalk.green(`✔︎ 编译成功 ${outputPath}`));
   fs.writeFileSync(outputPath, JSON.stringify(res, undefined, 2), 'utf8');
 }
-

@@ -8,7 +8,7 @@
   },
   "scripts": {
     "lint": "eslint ./src/ --fix",
-    "demo": "bin/cli.js -f ./demo/test.thrift -o ./demo/test.json",
+    "demo": "bin/cli.js -f ./demo/simple/s1.thrift -o ./demo/simple/s1.json",
     "pre-lint": "node eslint-ci-check.js"
   },
   "pre-commit": [
