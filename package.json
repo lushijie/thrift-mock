@@ -7,10 +7,13 @@
     "tjson": "bin/cli.js"
   },
   "scripts": {
-    "lint": "eslint --fix ./src/",
-    "test": "bin/cli.js -f ./demo/test.thrift -o ./demo/test.json",
-    "pre-commit": "npm run lint"
+    "lint": "eslint ./src/ --fix",
+    "demo": "bin/cli.js -f ./demo/test.thrift -o ./demo/test.json",
+    "pre-lint": "node eslint-ci-check.js"
   },
+  "pre-commit": [
+    "pre-lint"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
