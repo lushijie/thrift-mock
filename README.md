@@ -1,5 +1,10 @@
 # thrift-json
 
+<div style="text-align: center;">
+  <img src="https://p0.meituan.net/travelcube/d4f2c3a22d50957b2d4a6c20fa728d0663733.gif" >
+</div>
+
+
 ## 前言
 
 我们当前开发模式：客户端请求 Node 层， Node 层通过 thrift 与后端 rpc 通信， Node 层以 json 格式将获取到的数据返回客户端，大家在定义好 .thrift 文件之后前后端就各自开始开发了...
