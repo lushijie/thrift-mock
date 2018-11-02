@@ -1,6 +1,6 @@
 # thrift-json
 
-## 前言
+### 前言
 
 我们当前开发模式：客户端请求 Node 层， Node 层通过 thrift 与后端 rpc 通信， Node 层以 json 格式将获取到的数据返回客户端，大家在定义好 .thrift 文件之后前后端就各自开始开发了...
 
@@ -11,22 +11,22 @@
 
 biu biu ... thrift-json 就诞生了！ thrift-json 是一个根据 .thrift 文件生成 json 数据结构的工具。
 
-## 示例
+### 示例
 
 `tjson -f a.thrift -c User`
 <p>
   <img src="https://p0.meituan.net/travelcube/5612b6fc9ff31003fadddf47a161776f158521.png">
 </p>
 
-## 基本特性
+### 基本特性
   * 支持 const、enum、typedef、struct、exception、union、service 基本类型
   * 支持多层数据类型的嵌套
   * 支持多层数据结构的嵌套
   * 支持 include thrift文件
   * 支持 service extend
 
-## 如何使用
-####  方式1. 命令行
+### 如何使用
+#####  方式1. 命令行
 npm install lushijie@thrift-json -g
 
 进入 .thrift 目录执行
@@ -39,7 +39,7 @@ tjson 参数：
 * [-c] 要获取的结构名，不传获取全部结构
 * [-o] 重定向文件输出，包含后缀名
 
-#### 方式2. node 调用
+##### 方式2. node 调用
 npm install lushijie@thrift-json --save
 
 ```js
@@ -48,7 +48,7 @@ const res = thriftTool.parse('a.thrift', 'User'); // 获取 User 结构体的 js
 console.log(res);
 ```
 
-## 输出标识
+### 输出标识
 
 ```js
 module.exports = {
@@ -60,12 +60,12 @@ module.exports = {
 }
 ```
 
-## 生成 mock 数据
+### 生成 mock 数据
 
 获取到数据结构之后，最初打算一起生成 mock 数据。但是现实的情况是每个字段都有很强的语义，比如一个菜品 mock 出来一个城市名，这是不行的！
 也不可能为每个字段指定 mock 规则，所以暂时放弃一并生成 mock 数据的想法。
 
-## 相关问题
+### 相关问题
 1. [https://github.com/thriftrw/thriftrw-node/issues/162](https://github.com/thriftrw/thriftrw-node/issues/162)
 2. [https://github.com/thriftrw/thriftrw-node/issues/163](https://github.com/thriftrw/thriftrw-node/issues/163)
 
