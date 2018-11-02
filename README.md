@@ -1,9 +1,6 @@
 # thrift-json
 
-<div style="text-align: center;">
-  <img src="https://p0.meituan.net/travelcube/d4f2c3a22d50957b2d4a6c20fa728d0663733.gif" >
-</div>
-
+<img align=center src="https://p0.meituan.net/travelcube/d4f2c3a22d50957b2d4a6c20fa728d0663733.gif" >
 
 ## 前言
 
