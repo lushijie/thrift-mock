@@ -1,7 +1,5 @@
 # thrift-json
 
-<img align=center src="https://p0.meituan.net/travelcube/d4f2c3a22d50957b2d4a6c20fa728d0663733.gif" >
-
 ## 前言
 
 我们当前开发模式：客户端请求 Node 层， Node 层通过 thrift 与后端 rpc 通信， Node 层以 json 格式将获取到的数据返回客户端，大家在定义好 .thrift 文件之后前后端就各自开始开发了...
@@ -72,3 +70,8 @@ console.log(res);
 2. [https://github.com/thriftrw/thriftrw-node/issues/163](https://github.com/thriftrw/thriftrw-node/issues/163)
 
 第三方库暂时还没有解决上述问题，所以 fork 了一个，暂时做了兼容处理
+
+---
+<p align="center"> 
+  <img src="https://p0.meituan.net/travelcube/d4f2c3a22d50957b2d4a6c20fa728d0663733.gif">
+</p>
