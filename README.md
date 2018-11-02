@@ -56,7 +56,7 @@ npm install lushijie@thrift-json --save
 
 ```js
 const thriftTool = require('lushijie@thrift-json');
-const res = thriftTool.parse('a.thrift', 'User'); // 获取 User struct 结构体的 json 结构， 如果不传值返回整个文件的 json 结构
+const res = thriftTool.parse('a.thrift', 'User'); // 获取 User 结构体的 json 结构， 如果不传值返回整个文件的 json 结构
 console.log(res);
 ```
 
