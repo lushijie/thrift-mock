@@ -47,9 +47,9 @@ npm install lushijie@thrift-json -g
 `tjson -f a.thrift -c User -o abc.json`
 
 tjson 参数：
-* -f 要编译的thrift文件，包含后缀
-* -c 要获取的结构名，默认全部结构
-* -o 重定向文件输出，包含后缀
+* -f 要编译的thrift文件，包含后缀名
+* [-c] 要获取的结构名，不传获取全部结构
+* [-o] 重定向文件输出，包含后缀名
 
 #### 方式2. node 调用
 npm install lushijie@thrift-json --save
