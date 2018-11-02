@@ -25,18 +25,6 @@ biu biu ... thrift-json 就诞生了！ thrift-json 是一个根据 .thrift 文�
   * 支持 include thrift文件
   * 支持 service extend
 
-## 输出标识
-
-```js
-module.exports = {
-  basic: '◎', // 基本类型
-  required: '★', // required
-  optional: '☆', // optional
-  enum: '➤', // enum
-  enum_or: '⍮' // enum 连接符
-}
-```
-
 ## 如何使用
 ####  方式1. 命令行
 npm install lushijie@thrift-json -g
@@ -58,6 +46,18 @@ npm install lushijie@thrift-json --save
 const thriftTool = require('lushijie@thrift-json');
 const res = thriftTool.parse('a.thrift', 'User'); // 获取 User 结构体的 json 结构， 如果不传值返回整个文件的 json 结构
 console.log(res);
+```
+
+## 输出标识
+
+```js
+module.exports = {
+  basic: '◎', // 基本类型
+  required: '★', // required
+  optional: '☆', // optional
+  enum: '➤', // enum
+  enum_or: '⍮' // enum 连接符
+}
 ```
 
 ## 生成 mock 数据
