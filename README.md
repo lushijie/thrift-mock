@@ -6,8 +6,7 @@
 
 对于前端来说，现在没有可用的接口拿不到返回结果。但是 Node 层和客户端需要 mock 数据来写逻辑。这时候就需要翻译 .thrift 文件，来获取接口将会返回的数据结构，然后再为每个字段 mock 特定数据。
 
-我们可以看懂 idl 表达的数据结构，但是当数据结构超级复杂的时候，我们在脑海中其实已经启动了一个“线程”将其快速地转化为 json 结构，每次写逻辑都会走一遍这个”翻译“流程，因为太复杂，记不住！
-当使用了 ”include“ 命令的时候就更麻烦了，要来回的切换文件，切着切着就忘记刚刚看过的结构了...
+我们可以看懂 idl 表达的数据结构，但是当数据结构超级复杂的时候，我们在脑海中其实已经启动了一个“线程”将其快速地转化为 json 结构，每次写逻辑都会走一遍这个”翻译“流程。当使用了 ”include“ 命令的时候就更麻烦了，要来回的切换文件，切着切着就忘记刚刚看过的结构了...
 
 biu biu ... thrift-json 就诞生了！ thrift-json 是一个根据 .thrift 文件生成 json 数据结构的工具。
 
@@ -19,11 +18,11 @@ biu biu ... thrift-json 就诞生了！ thrift-json 是一个根据 .thrift 文�
 </p>
 
 ## 基本特性
-  * 支持 const、enum、typedef、struct、exception、union、service 基本类型
+  * 支持 const、enum、typedef、struct、exception、union、service 基本数据结构
   * 支持多层数据类型的嵌套
   * 支持多层数据结构的嵌套
   * 支持 include thrift文件
-  * 支持 service extend
+  * 支持 service 的 extend 语法
 
 ## 输出标识
 
