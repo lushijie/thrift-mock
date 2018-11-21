@@ -38,6 +38,7 @@ npm install @lushijie/thrift-json -g
 
 进入 cd /demo，此时目录存在 case 目录，目录中包含 a.thrift 与 b.thrift
 
+```
 1. 编译 case 下所有的 .thrift 文件 （在 case 目录下生成 a.json、b.json）
 
 `tjson -d ./case`
@@ -61,6 +62,7 @@ npm install @lushijie/thrift-json -g
 5. 编译 case 下的 a.thrift 中 User 结构体（在 case 目录下生成 a.json，仅包含 User 结构体）
 
 `tjson -f ./case/a.thrift -c User`
+```
 
 tjson 参数：
 * -e 指定thrift文件的后缀，默认.thrift
