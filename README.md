@@ -28,15 +28,43 @@ biu biu ... thrift-json 就诞生了！ thrift-json 是一个根据 .thrift 文�
 #####  方式1. 命令行
 npm install lushijie@thrift-json -g
 
-进入 .thrift 目录执行
-`tjson -f xx.thrift`
-或
-`tjson -f a.thrift -c User -o abc.json`
+> demo
+  >> case
+    >>> a.thrift
+    >>> b.thrift
+
+进入 cd /demo，此时目录存在 case 目录，目录中包含 a.thrift 与 b.thrift
+
+1. 编译 case 下所有的 .thrift 文件 （在 case 目录下生成 a.json、b.json）
+
+`tjson -d ./case`
+
+2. 编译 case 下的所有 .thrift 文件，并改变输出目录（在当前目录下生成 a.json、b.json）
+
+`tjson -d ./case -o .`
+
+3. 编译 case 下的 a.thrift 文件（在 case 目录下生成 a.json）
+
+`tjson -f ./case/a.thrift`
+
+4. 编译 case 下的 a.thrift 文件，并重命名 （在 case 目录下生成 a1.json）
+
+`tjson -f ./case/a.thrift -o ./case/a1.json`
+
+或者进入 case 目录执行
+
+`tjson -f a.thrift a1.json`
+
+5. 编译 case 下的 a.thrift 中 User 结构体（在 case 目录下生成 a.json，仅包含 User 结构体）
+
+`tjson -f ./case/a.thrift -c User`
 
 tjson 参数：
-* -f 要编译的thrift文件，包含后缀名
-* [-c] 要获取的结构名，不传获取全部结构
-* [-o] 重定向文件输出，包含后缀名
+* -e 指定thrift文件的后缀，默认.thrift
+* -d 要编译的目录，默认文件所在的目录
+* -f 要编译的thrift文件
+* [-c] 要获取的结构名，不传时获取全部结构
+* [-o] 重定向文件输出目录
 
 ##### 方式2. node 调用
 npm install lushijie@thrift-json --save
