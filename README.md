@@ -28,10 +28,11 @@ biu biu ... thrift-json 就诞生了！ thrift-json 是一个根据 .thrift 文�
 #####  方式1. 命令行
 npm install @lushijie/thrift-json -g
 
-> demo
-  >> case
-    >>> a.thrift
-    >>> b.thrift
+* demo
+  * case
+    * a.thrift 
+    * b.thrift
+
 
 进入 cd /demo，此时目录存在 case 目录，目录中包含 a.thrift 与 b.thrift
 
