@@ -26,7 +26,7 @@ biu biu ... thrift-json 就诞生了！ thrift-json 是一个根据 .thrift 文�
 
 ### 如何使用
 #####  方式1. 命令行
-npm install lushijie@thrift-json -g
+npm install @lushijie/thrift-json -g
 
 > demo
   >> case
@@ -67,10 +67,10 @@ tjson 参数：
 * [-o] 重定向文件输出目录
 
 ##### 方式2. node 调用
-npm install lushijie@thrift-json --save
+npm install @lushijie/thrift-json --save
 
 ```js
-const thriftTool = require('lushijie@thrift-json');
+const thriftTool = require('@lushijie/thrift-json');
 const res = thriftTool.parse('a.thrift', 'User'); // 获取 User 结构体的 json 结构， 如果不传值返回整个文件的 json 结构
 console.log(res);
 ```
