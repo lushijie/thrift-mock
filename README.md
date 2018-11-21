@@ -57,9 +57,9 @@ npm install @lushijie/thrift-json -g
 ```
 
 tjson 参数：
-* -e 指定thrift文件的后缀，默认.thrift
-* -d 要编译的目录，默认文件所在的目录
+* -d 要编译的目录
 * -f 要编译的thrift文件
+* [-e] 指定thrift文件的后缀，默认.thrift
 * [-c] 要获取的结构名，不传时获取全部结构
 * [-o] 重定向文件输出目录
 
