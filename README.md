@@ -1,5 +1,7 @@
 # thrift-json
 
+[![npm](https://img.shields.io/npm/v/@lushijie/thrift-json.svg?colorB=brightgreen&style=flat-square)](https://www.npmjs.com/package/@lushijie/thrift-json)
+
 ### 1. 前言
 
 我们当前开发模式：客户端请求 Node 层， Node 层通过 thrift 与后端 rpc 通信， Node 层以 json 格式将获取到的数据返回客户端，大家在定义好 .thrift 文件之后前后端就各自开始开发了...
