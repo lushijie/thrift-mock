@@ -28,6 +28,8 @@ biu biu ... thrift-json 就诞生了！ thrift-json 是一个根据 .thrift 文�
 #####  方式1. 命令行
 npm install @lushijie/thrift-json -g
 
+
+#### 示例，存在如下目录：
 * demo
   * case
     * a.thrift 
@@ -38,27 +40,27 @@ npm install @lushijie/thrift-json -g
 
 1. 编译 case 下所有的 .thrift 文件 （在 case 目录下生成 a.json、b.json）
 
-> `tjson -d ./case`
+`tjson -d ./case`
 
 2. 编译 case 下的所有 .thrift 文件，并改变输出目录（在当前目录下生成 a.json、b.json）
 
-> `tjson -d ./case -o .`
+`tjson -d ./case -o .`
 
 3. 编译 case 下的 a.thrift 文件（在 case 目录下生成 a.json）
 
-> `tjson -f ./case/a.thrift`
+`tjson -f ./case/a.thrift`
 
 4. 编译 case 下的 a.thrift 文件，并重命名 （在 case 目录下生成 a1.json）
 
-> `tjson -f ./case/a.thrift -o ./case/a1.json`
+`tjson -f ./case/a.thrift -o ./case/a1.json`
 
 或者进入 case 目录执行
 
-> `tjson -f a.thrift a1.json`
+`tjson -f a.thrift a1.json`
 
 5. 编译 case 下的 a.thrift 中 User 结构体（在 case 目录下生成 a.json，仅包含 User 结构体）
 
-> `tjson -f ./case/a.thrift -c User`
+`tjson -f ./case/a.thrift -c User`
 
 tjson 参数：
 * -e 指定thrift文件的后缀，默认.thrift
