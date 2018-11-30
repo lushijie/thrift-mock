@@ -5,6 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const program = require('commander');
 const chalk = require('chalk');
+const stringifyObject = require('stringify-object');
 const ThriftTool = require('../src');
 
 program
@@ -50,9 +51,9 @@ function convertFile(filePath, outputPath) {
   }
   const fileName = path.parse(filePath).name;
 
-  // 如果输出不带后缀，当做一个目录输出，补充fileName与后缀
-  if (!outputPath.endsWith('.json')) {
-    outputPath = path.join(outputPath, fileName + '.json');
+  // 如果输出不带后缀，则当做一个目录输出
+  if (!outputPath.endsWith('.js')) {
+    outputPath = path.join(outputPath, fileName + '.mock.js');
   }
 
   if (!fs.existsSync(filePath)) {
@@ -63,7 +64,11 @@ function convertFile(filePath, outputPath) {
   const res = thriftTool.parse(filePath, program.class);
   if (res) {
     console.log(chalk.green(`✔︎ 编译成功 ${outputPath}`));
-    fs.writeFileSync(outputPath, JSON.stringify(res, undefined, 2), 'utf8');
+    // fs.writeFileSync(outputPath, JSON.stringify(res, undefined, 2), 'utf8');
+    outputResult = 'module.exports = ' + stringifyObject(res, {
+      indent: '  ',
+    });
+    fs.writeFileSync(outputPath, outputResult, 'utf8');
   }
 }
 
