@@ -79,8 +79,9 @@ tjson run 通过交互式的命令来使用，这样就不用记这么多的参�
 npm install @lushijie/thrift-json --save
 
 ```js
+// 获取 a.thrift 中 User 结构体的结构
 const thriftTool = require('@lushijie/thrift-json');
-const res = thriftTool.parse('/usr/a.thrift', 'User'); // 获取 User 结构体的结构
+const res = thriftTool.parse({filePath: '/usr/a.thrift', name: 'User'});
 console.log(res);
 ```
 

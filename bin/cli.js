@@ -168,7 +168,7 @@ function convertFile(filePath) {
   }
 
   const thriftTool = new ThriftTool();
-  let res = thriftTool.parse(filePath, params.name) || {};
+  let res = thriftTool.parse({filePath, name: params.name}) || {};
 
   // 获取特定service中的特定method
   if (params.method) {

@@ -178,7 +178,7 @@ module.exports = class ThriftTool {
   }
 
   // 入口
-  parse(filePath, name) {
+  parse({filePath, name}) {
     const sourceResult = new Thriftrw({
       strict: false,
       entryPoint: path.resolve(filePath),
