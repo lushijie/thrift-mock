@@ -12,8 +12,8 @@ const ThriftTool = require('../src');
 
 const jsFileHeader = `
 /**
-  * @Genetate by: think-json
-  * @Github: https://github.com/lushijie/thrift-json
+  * @Genetate by: thrift-mock
+  * @Github: https://github.com/lushijie/thrift-mock
   * @Date: ${Utils.dateTimeFormat(new Date(), 'yyyy-MM-dd hh:mm:ss')}
  */
 

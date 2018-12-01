@@ -1,10 +1,10 @@
 {
-  "name": "@lushijie/thrift-json",
-  "version": "2.2.0",
+  "name": "@lushijie/thrift-mock",
+  "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "bin": {
-    "tjson": "bin/cli.js"
+    "tmock": "bin/cli.js"
   },
   "scripts": {
     "lint": "eslint ./src/ --fix",
@@ -17,6 +17,7 @@
   "author": "lushijie1218@126.com",
   "keywords": [
     "thrift",
+    "mock",
     "thrift-mock",
     "thrift-json"
   ],

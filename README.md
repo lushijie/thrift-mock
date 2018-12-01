@@ -1,6 +1,6 @@
-# thrift-json
+# thrift-mock
 
-[![npm](https://img.shields.io/npm/v/@lushijie/thrift-json.svg?colorB=brightgreen&style=flat-square)](https://www.npmjs.com/package/@lushijie/thrift-json)
+[![npm](https://img.shields.io/npm/v/@lushijie/thrift-mock.svg?colorB=brightgreen&style=flat-square)](https://www.npmjs.com/package/@lushijie/thrift-mock)
 
 ### 1. 前言
 
@@ -10,11 +10,11 @@
 
 我们可以看懂 idl 表达的数据结构，但是当数据结构超级复杂的时候，我们在脑海中其实已经启动了一个“线程”将其快速地转化为 json 结构，每次写逻辑都会走一遍这个”翻译“流程。当使用了 ”include“ 命令的时候就更麻烦了，要来回的切换文件，切着切着就忘记刚刚看过的结构了...
 
-biu biu ... thrift-json 就诞生了！ thrift-json 是一个根据 .thrift 文件生成 json 数据结构的工具。
+biu biu ... thrift-mock 就诞生了！ thrift-mock 是一个根据 .thrift 文件生成对应数据结构的工具，当然也可以 mock 出相应的数据。
 
 ### 2. 输出示例
 
-`tjson -f a.thrift --name User`
+`tmock -f a.thrift --name User`
 
 <p>
   <img src="./demo.png">
@@ -29,9 +29,9 @@ biu biu ... thrift-json 就诞生了！ thrift-json 是一个根据 .thrift 文�
 
 ### 4. 如何使用
 #####  4.1. 命令行
-npm install @lushijie/thrift-json -g
+npm install @lushijie/thrift-mock -g
 
-tjson 参数：
+tmock 参数：
 * -d 要编译的目录
 * -f 要编译的thrift文件
 * [--auto] 是否自动生成mock数据
@@ -50,41 +50,41 @@ tjson 参数：
 进入 cd /demo，此时目录存在 case 目录，目录中包含 a.thrift 与 b.thrift
 
 1. 编译 case 下所有的 .thrift 文件 （在 case 目录下生成 a.mock.js、b.mock.js）
-  tjson -d ./case
+  tmock -d ./case
 
 2. 编译 case 下的所有 .thrift 文件，并改变输出目录（在 /a 目录下生成 a.mock.js、b.mock.js）
-  tjson -d ./case --output /a
+  tmock -d ./case --output /a
 
 3. 编译 case 下的 a.thrift 文件（在 case 目录下生成 a.mock.js）
-  tjson -f ./case/a.thrift
+  tmock -f ./case/a.thrift
 
 4. 编译 case 下的 a.thrift 文件，并重命名 （在 case 目录下生成 a1.json）
-  tjson -f ./case/a.thrift --output ./case/a1.json
+  tmock -f ./case/a.thrift --output ./case/a1.json
   * 此处重命名文件后缀只能是 .js 或者 .json
 
 5. 编译 case 下的 a.thrift 中 User 结构体（在 case 目录下生成 a.json，仅包含 User 结构体）
-  tjson -f ./case/a.thrift --name User
+  tmock -f ./case/a.thrift --name User
 
 6. 编译 case 下所有的 .thrift 文件，生成 .json 文件（在 case 目录下生成 a.mock.json、b.mock.json）
-  tjson -d ./case --outext .json
+  tmock -d ./case --outext .json
 
 7. 编译 case 下的 a.thrift 文件， 输出 service 中 SMSService 的 send 方法
-  tjson -f a.thrift --name SMSService --method send
+  tmock -f a.thrift --name SMSService --method send
 
 8. 自动生成 mock 数据
-  tjson -f a.thrift --auto
+  tmock -f a.thrift --auto
 ```
 ##### 4.2. 交互式命令
-tjson run
+tmock run
 
-tjson run 通过交互式的命令来使用，这样就不用记这么多的参数了！
+tmock run 通过交互式的命令来使用，这样就不用记这么多的参数了！
 
 ##### 4.3. node 调用
-npm install @lushijie/thrift-json --save
+npm install @lushijie/thrift-mock --save
 
 ```js
 // 获取 a.thrift 中 User 结构体的结构
-const thriftTool = require('@lushijie/thrift-json');
+const thriftTool = require('@lushijie/thrift-mock');
 const res = thriftTool.parse({filePath: '/usr/a.thrift', name: 'User', auto: true});
 console.log(res);
 ```
