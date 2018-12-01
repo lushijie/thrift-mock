@@ -2,6 +2,6 @@ module.exports = {
   basic: '◎',
   required: '★',
   optional: '☆',
-  enum: '➤',
-  enum_or: '⍮'
+  enum: '✼',
+  enum_or: '┇'
 };

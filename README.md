@@ -88,11 +88,11 @@ console.log(res);
 
 ```js
 module.exports = {
-  basic: '◎_', // 基本类型，如i32, string, bool ...
-  required: '★_', // 必填字段
-  optional: '☆_', // 选填字段
-  enum: '➤_', // enum 类型
-  enum_or: '⍮' // enum 连接符
+  basic: '◎', // 基本类型，如i32, string, bool ...
+  required: '★', // 必填字段
+  optional: '☆', // 选填字段
+  enum: '✼', // enum 类型
+  enum_or: '┇' // enum 连接符
 }
 ```
 
