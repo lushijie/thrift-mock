@@ -14,11 +14,16 @@
   "pre-commit": [
     "pre-lint"
   ],
-  "author": "",
+  "author": "lushijie1218@126.com",
+  "keywords": [
+    "thrift",
+    "thrift-mock",
+    "thrift-json"
+  ],
   "license": "ISC",
   "dependencies": {
     "@lushijie/thriftrw": "^3.11.3",
-    "@lushijie/utils": "^1.0.0",
+    "@lushijie/utils": "^1.2.0",
     "chalk": "^2.4.1",
     "commander": "^2.19.0",
     "core-util-is": "^1.0.2",

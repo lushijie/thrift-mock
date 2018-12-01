@@ -3,7 +3,7 @@ const Base = require('../base');
 module.exports = function({syntax, thriftTool}) {
   const res = {};
   Object.keys(syntax).forEach(key => {
-    res[`${Icon['optional']} ${key}`] = Base({
+    res[`${Icon['optional']}_${key}`] = Base({
       syntax: syntax[key],
       thriftTool
     });

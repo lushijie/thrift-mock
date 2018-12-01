@@ -69,7 +69,7 @@ module.exports = class ThriftTool {
         }
         throw new Error(`${type} 类型的构造器在 generator 中不存在`);
       }
-      throw new Error(`${name} 未在 thrift ast 语法书中搜寻到`);
+      throw new Error(`${name} 未在 thrift ast 语法树中搜寻到`);
     };
   }
 

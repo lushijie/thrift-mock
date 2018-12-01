@@ -10,12 +10,12 @@ module.exports = function({syntax, thriftTool}) {
 
   function fn({valueStyle, valueType, keyType = null}) {
     if (valueStyle === 'basetype') {
-      let prefix = `${Icon['basic']} `;
+      let prefix = `${Icon['basic']}_`;
       if (required) {
-        prefix = `${Icon['required']} `;
+        prefix = `${Icon['required']}_`;
       }
       if (optional) {
-        prefix = `${Icon['optional']} `;
+        prefix = `${Icon['optional']}_`;
       }
       return `${prefix}${valueType}`;
     } else if (valueStyle === 'identifier') {

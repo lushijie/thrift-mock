@@ -14,7 +14,8 @@ biu biu ... thrift-json 就诞生了！ thrift-json 是一个根据 .thrift 文�
 
 ### 2. 输出示例
 
-`tjson -f a.thrift -c User`
+`tjson -f a.thrift --name User`
+
 <p>
   <img src="https://p0.meituan.net/travelcube/5612b6fc9ff31003fadddf47a161776f158521.png">
 </p>
@@ -30,45 +31,47 @@ biu biu ... thrift-json 就诞生了！ thrift-json 是一个根据 .thrift 文�
 #####  4.1. 命令行
 npm install @lushijie/thrift-json -g
 
+tjson 参数：
+* -d 要编译的目录
+* -f 要编译的thrift文件
+* [--output] 重定向文件输出目录，默认文件所在的目录
+* [--outext] 输出文件后缀，支持 .js 和 .json， 默认 .js
+* [--inext] thrift 文件后缀，默认 .thrift
+* [--name] 输出特定的 thrift 结构，例如只输出某一个 service 或者某一个 struct(注意这里不能是 service 中的方法名)，默认输出所有的 thrift 结构
 ```
 使用示例，存在如下目录：
 * demo
   * case
-    * a.thrift 
+    * a.thrift
     * b.thrift
 进入 cd /demo，此时目录存在 case 目录，目录中包含 a.thrift 与 b.thrift
 
-1. 编译 case 下所有的 .thrift 文件 （在 case 目录下生成 a.json、b.json）
+1. 编译 case 下所有的 .thrift 文件 （在 case 目录下生成 a.mock.js、b.mock.js）
   tjson -d ./case
 
-2. 编译 case 下的所有 .thrift 文件，并改变输出目录（在当前目录下生成 a.json、b.json）
-  tjson -d ./case -o .
+2. 编译 case 下的所有 .thrift 文件，并改变输出目录（在 /a 目录下生成 a.mock.js、b.mock.js）
+  tjson -d ./case --output /a
 
-3. 编译 case 下的 a.thrift 文件（在 case 目录下生成 a.json）
+3. 编译 case 下的 a.thrift 文件（在 case 目录下生成 a.mock.js）
   tjson -f ./case/a.thrift
 
 4. 编译 case 下的 a.thrift 文件，并重命名 （在 case 目录下生成 a1.json）
-  tjson -f ./case/a.thrift -o ./case/a1.json
-  或者进入 case 目录执行
-  tjson -f a.thrift a1.json
+  tjson -f ./case/a.thrift --output ./case/a1.json
+  * 此处重命名文件后缀只能是 .js 或者 .json
 
 5. 编译 case 下的 a.thrift 中 User 结构体（在 case 目录下生成 a.json，仅包含 User 结构体）
-  tjson -f ./case/a.thrift -c User
-```
+  tjson -f ./case/a.thrift --name User
 
-tjson 参数：
-* -d 要编译的目录
-* -f 要编译的thrift文件
-* [-e] 指定thrift文件的后缀，默认.thrift
-* [-c] 要获取的结构名，不传时获取全部结构
-* [-o] 重定向文件输出目录
+6. 编译 case 下所有的 .thrift 文件，生成 .json 文件（在 case 目录下生成 a.mock.json、b.mock.json）
+  tjson -d ./case --outext .json
+```
 
 ##### 4.2. node 调用
 npm install @lushijie/thrift-json --save
 
 ```js
 const thriftTool = require('@lushijie/thrift-json');
-const res = thriftTool.parse('a.thrift', 'User'); // 获取 User 结构体的 json 结构， 如果不传值返回整个文件的 json 结构
+const res = thriftTool.parse('/usr/a.thrift', 'User'); // 获取 User 结构体的结构
 console.log(res);
 ```
 
@@ -76,18 +79,19 @@ console.log(res);
 
 ```js
 module.exports = {
-  basic: '◎', // 基本类型
-  required: '★', // required
-  optional: '☆', // optional
-  enum: '➤', // enum
+  basic: '◎_', // 基本类型，如i32, string, bool ...
+  required: '★_', // 必填字段
+  optional: '☆_', // 选填字段
+  enum: '➤_', // enum 类型
   enum_or: '⍮' // enum 连接符
 }
 ```
 
 ### 6. 生成 mock 数据
 
-获取到数据结构之后，最初打算一起生成 mock 数据。但是现实的情况是每个字段都有很强的语义，比如一个菜品 mock 出来一个城市名，这是不行的！
-也不可能为每个字段指定 mock 规则，所以暂时放弃一并生成 mock 数据的想法。
+获取到数据结构之后，最初打算一起生成 mock 数据。但是现实的情况是每个字段都有很强的语义，比如一个菜品 mock 出来一个城市名，这是不行的！也不可能为每个字段指定 mock 规则，所以暂时放弃一并生成 mock 数据的想法。
+
+但是在生成的 .js 文件中，大家可以自行使用各种各样的 random 类库创造属于自己的 mock 数据 ~~~
 
 ### 相关问题
 1. [https://github.com/thriftrw/thriftrw-node/issues/162](https://github.com/thriftrw/thriftrw-node/issues/162)

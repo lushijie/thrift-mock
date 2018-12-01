@@ -4,20 +4,43 @@
 const fs = require('fs');
 const path = require('path');
 const program = require('commander');
+const Utils = require('@lushijie/utils');
 const chalk = require('chalk');
 const stringifyObject = require('stringify-object');
 const ThriftTool = require('../src');
 
 program
-  .version('0.1.0')
-  .option('-d, --dir <value>', 'compile all .thrift file in the dir')
-  .option('-f, --file <value>', 'single thrift file you want to convert')
-  .option('-c, --class <value>', 'class name for output')
-  .option('-o, --output <value>', 'the output path')
-  .option('-e, --ext <value>', 'thrift file extension')
+  .version('1.0.0')
+  .option('-d, --dir <value>', '编译文件目录下的所有 .thrfit 文件')
+  .option('-f, --file <value>', '编译指定的单个 .thrift 文件')
+  .option('--output <value>', '输出目录, 默认文件所在目录')
+  .option('--outext <value>', '输出文件后缀，.js 或者 .json', '.js')
+  .option('--inext <value>', '输入文件后缀', '.thrift')
+  .option('--name <value>', '输出特定的 thrift 结构，如只输出某一个 service')
   .parse(process.argv);
 
-const extension = program.ext || '.thrift';
+const params = {
+  dir: program.dir,
+  file: program.file,
+  output: program.output,
+  outext: program.outext,
+  inext: program.inext,
+  name: Utils.isFunction(program.name) ? undefined : program.name,
+};
+
+const jsFileHeader = `
+/**
+  * @Genetate by: think-json
+  * @Github: https://github.com/lushijie/thrift-json
+  * @Date: ${Utils.dateTimeFormat(new Date(), 'yyyy-MM-dd hh:mm:ss')}
+ */
+
+module.exports =
+`;
+
+if (!params.dir && !params.file) {
+  console.log(chalk.red('✘ Please input dir or file of the thrift file...'));
+}
 
 function getFileFromDir(dir, ext){
   let res = [];
@@ -38,22 +61,21 @@ function getFileFromDir(dir, ext){
   return res;
 };
 
-function convertFile(filePath, outputPath) {
-  // outputPath 不传入，使用filePath dirname
-  outputPath = outputPath || path.dirname(filePath);
-
+function convertFile(filePath) {
+  let outputPath = params.output;
+  outputPath = outputPath || path.dirname(filePath);   // 未指定，使用filePath dirname
   outputPath = path.resolve(outputPath);
   filePath = path.resolve(filePath);
 
   // 如果输入文件不带后缀，补充后缀
-  if (!filePath.endsWith(extension)) {
-    filePath = filePath + extension;
+  if (!filePath.endsWith(params.inext)) {
+    filePath = filePath + params.inext;
   }
   const fileName = path.parse(filePath).name;
 
   // 如果输出不带后缀，则当做一个目录输出
-  if (!outputPath.endsWith('.js')) {
-    outputPath = path.join(outputPath, fileName + '.mock.js');
+  if (!(outputPath.endsWith('.js') || outputPath.endsWith('.json'))) {
+    outputPath = path.join(outputPath, fileName + '.mock' + params.outext);
   }
 
   if (!fs.existsSync(filePath)) {
@@ -61,21 +83,27 @@ function convertFile(filePath, outputPath) {
   }
 
   const thriftTool = new ThriftTool();
-  const res = thriftTool.parse(filePath, program.class);
+  const res = thriftTool.parse(filePath, params.name);
   if (res) {
     console.log(chalk.green(`✔︎ 编译成功 ${outputPath}`));
-    // fs.writeFileSync(outputPath, JSON.stringify(res, undefined, 2), 'utf8');
-    outputResult = 'module.exports = ' + stringifyObject(res, {
-      indent: '  ',
-    });
+    let outputResult = '';
+    if (params.outext === '.js') {
+      // js 类型输出
+      outputResult = jsFileHeader + stringifyObject(res, {
+        indent: '  ',
+      });
+    } else {
+      // .json 类型输出
+      outputResult = JSON.stringify(res, undefined, 2);
+    }
     fs.writeFileSync(outputPath, outputResult, 'utf8');
   }
 }
 
-if (program.file) {
-  convertFile(program.file, program.output)
-} else if (program.dir) {
-  getFileFromDir(program.dir, extension).forEach(function(filePath) {
-    convertFile(filePath, program.output);
+if (params.file) {
+  convertFile(params.file)
+} else if (params.dir) {
+  getFileFromDir(params.dir, params.inext).forEach(function(filePath) {
+    convertFile(filePath);
   });
 }
