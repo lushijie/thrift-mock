@@ -24,7 +24,8 @@ program
   .version('1.0.0')
   .option('-d, --dir <value>', '编译文件目录下的所有 .thrfit 文件')
   .option('-f, --file <value>', '编译指定的单个 .thrift 文件')
-  .option('--name <value>', '输出特定的 thrift 结构，如只输出某一个 service')
+  .option('--name <value>', '输出特定的 thrift 结构，如只输出某一个 service 的名字')
+  .option('--method <value>', '输出 service 中的某个方法')
   .option('--output <value>', '输出目录, 默认文件所在目录')
   .option('--outext <value>', '输出文件后缀，.js 或者 .json', '.js')
   .option('--inext <value>', '输入文件后缀', '.thrift')
@@ -47,7 +48,7 @@ program
     }];
     inquirer.prompt(promps).then(answers => {
       params.dfType = answers.dfType;
-      const tempText = answers.dfType === 'dir' ? '目录地址' : '文件地址';
+      const tempText = answers.dfType === 'dir' ? '目录路径' : '文件地址';
       promps = [{
         type: 'input',
         name: 'dfPath',
@@ -61,16 +62,26 @@ program
         }
       }];
       inquirer.prompt(promps).then(answers => {
-        console.log(chalk.green('--以下参数都可以使用默认值---'));
+        console.log(chalk.green('-- 以下参数都可以使用默认值 ---'));
         params[params.dfType] = answers.dfPath;
+        const outputDefault = '默认 .thrift 文件所在的目录';
+        const nameDefault = '默认全部输出';
+        const methodDefault = '如果指定method, 则必须指定 name 为特定的 service 名称';
         promps = [{
           type: 'input',
-          name: 'name',
-          message: `请输入，特定的 thrift 结构名称(默认全部输出):`,
+          name: 'output',
+          message: `请输入，输出的目录路径:`,
+          default: outputDefault,
         }, {
           type: 'input',
-          name: 'output',
-          message: `请输入，输出目录(默认 .thrift 文件所在的目录):`,
+          name: 'name',
+          message: `请输入，特定的 thrift 结构名称(如某一个 struct 名称):`,
+          default: nameDefault,
+        }, {
+          type: 'input',
+          name: 'method',
+          message: `请输入，输出 service 中特定的 method:`,
+          default: methodDefault
         }, {
           type: 'list',
           name: 'outext',
@@ -93,8 +104,9 @@ program
           default: '.thrift',
         }];
         inquirer.prompt(promps).then(answers => {
-          params.name = answers.name;
-          params.output = answers.output;
+          params.name = (answers.name === nameDefault) ? undefined : answers.name;
+          params.method = (answers.method === methodDefault) ? undefined : answers.method;
+          params.output = (answers.output === outputDefault) ? undefined : answers.output;
           params.outext = answers.outext;
           params.inext = answers.inext;
           run(params);
@@ -111,6 +123,7 @@ params = {
   output: program.output,
   outext: program.outext,
   inext: program.inext,
+  method: program.method,
   name: Utils.isFunction(program.name) ? undefined : program.name, // 参数形式下不传name，默认返回funtion
 };
 
@@ -155,17 +168,22 @@ function convertFile(filePath) {
   }
 
   const thriftTool = new ThriftTool();
-  const res = thriftTool.parse(filePath, params.name);
+  let res = thriftTool.parse(filePath, params.name) || {};
+
+  // 获取特定service中的特定method
+  if (params.method) {
+    res = res[params.method];
+  }
+
+  // 输出到文件
   if (res) {
     console.log(chalk.green(`✔︎ 编译成功 ${outputPath}`));
     let outputResult = '';
-    if (params.outext === '.js') {
-      // js 类型输出
+    if (params.outext === '.js') { // js 类型输出
       outputResult = jsFileHeader + stringifyObject(res, {
         indent: '  ',
       });
-    } else {
-      // .json 类型输出
+    } else { // .json 类型输出
       outputResult = JSON.stringify(res, undefined, 2);
     }
     fs.writeFileSync(outputPath, outputResult, 'utf8');
@@ -173,9 +191,14 @@ function convertFile(filePath) {
 }
 
 function run(params) {
+  console.log(params);
   // if (!params.dir && !params.file) {
   //   console.log(chalk.red('✘ Please input dir or file of the thrift file...'));
   // }
+
+  if (!params.name && params.method) {
+    return console.log(chalk.red('✘ name is required if method exist...'));
+  }
 
   if (params.file) {
     convertFile(params.file)

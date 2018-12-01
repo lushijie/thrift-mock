@@ -38,6 +38,7 @@ tjson 参数：
 * [--outext] 输出文件后缀，支持 .js 和 .json， 默认 .js
 * [--inext] thrift 文件后缀，默认 .thrift
 * [--name] 输出特定的 thrift 结构，例如只输出某一个 service 或者某一个 struct(注意这里不能是 service 中的方法名)，默认输出所有的 thrift 结构
+* [--method] 输出 service 中特定的 method(需要指定 --name 为特定的 service 名称)
 
 ```
 使用示例，存在如下目录：
@@ -65,6 +66,9 @@ tjson 参数：
 
 6. 编译 case 下所有的 .thrift 文件，生成 .json 文件（在 case 目录下生成 a.mock.json、b.mock.json）
   tjson -d ./case --outext .json
+
+7. 编译 case 下的 a.thrift 文件， 输出 service 中 SMSService 的 send 方法
+  tjson -f a.thrift --name SMSService --method send
 ```
 ##### 4.2. 交互式命令
 tjson run
