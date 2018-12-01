@@ -15,6 +15,10 @@
     "pre-lint"
   ],
   "author": "lushijie1218@126.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lushijie/thrift-mock"
+  },
   "keywords": [
     "thrift",
     "mock",
