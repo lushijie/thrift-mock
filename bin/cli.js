@@ -139,6 +139,7 @@ params = {
   inext: program.inext,
   method: program.method,
   name: Utils.isFunction(program.name) ? undefined : program.name, // 参数形式下不传name，默认返回funtion
+  auto: program.auto
 };
 
 function getFileFromDir(dir, ext){
