@@ -17,7 +17,7 @@ biu biu ... thrift-json 就诞生了！ thrift-json 是一个根据 .thrift 文�
 `tjson -f a.thrift --name User`
 
 <p>
-  <img src="https://p0.meituan.net/travelcube/5612b6fc9ff31003fadddf47a161776f158521.png">
+  <img src="./demo.png">
 </p>
 
 ## 3. 基本特性

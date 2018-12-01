@@ -35,8 +35,7 @@ const jsFileHeader = `
   * @Date: ${Utils.dateTimeFormat(new Date(), 'yyyy-MM-dd hh:mm:ss')}
  */
 
-module.exports =
-`;
+module.exports = `;
 
 if (!params.dir && !params.file) {
   console.log(chalk.red('✘ Please input dir or file of the thrift file...'));
