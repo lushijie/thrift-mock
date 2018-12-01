@@ -6,7 +6,7 @@ module.exports = function({ syntax, thriftTool }) {
     const list = Object.keys(syntax).map(key => {
       return syntax[key];
     });
-    return list[Utils.randomNumber(0, list.length, true)];
+    return list[Utils.randomNumber(0, list.length - 1, true)];
   }
 
   return `${Icon['enum']}_(${Object.keys(syntax).map(key => {

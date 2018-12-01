@@ -19,7 +19,7 @@ module.exports = {
     return Utils.randomNumber(0, Math.pow(2, 53) - 1, true);
   },
   double() {
-    return Utils.truncateNum(random.float(10, 100), 2, 2);
+    return Number(Utils.truncateNum(random.float(10, 100), 2, 2));
   },
   string() {
     return randomstring.generate(12);
