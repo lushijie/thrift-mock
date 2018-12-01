@@ -29,6 +29,7 @@ program
   .option('--output <value>', '输出目录, 默认文件所在目录')
   .option('--outext <value>', '输出文件后缀，.js 或者 .json', '.js')
   .option('--inext <value>', '输入文件后缀', '.thrift')
+  .option('--auto', '自动生成 mock 数据')
 
 program
   .command('run')
@@ -60,10 +61,23 @@ program
           };
           return true;
         }
+      }, {
+        type: 'list',
+        name: 'auto',
+        message: '是否自动生成 mock 数据',
+        default: false,
+        choices: [{
+            name: 'Y',
+            value: true
+          }, {
+            name: 'N',
+            value: false
+        }]
       }];
       inquirer.prompt(promps).then(answers => {
         console.log(chalk.green('-- 以下参数都可以使用默认值 ---'));
         params[params.dfType] = answers.dfPath;
+        params.auto = answers.auto;
         const outputDefault = '默认 .thrift 文件所在的目录';
         const nameDefault = '默认全部输出';
         const methodDefault = '如果指定method, 则必须指定 name 为特定的 service 名称';
@@ -168,7 +182,7 @@ function convertFile(filePath) {
   }
 
   const thriftTool = new ThriftTool();
-  let res = thriftTool.parse({filePath, name: params.name}) || {};
+  let res = thriftTool.parse({filePath, name: params.name, auto: params.auto}) || {};
 
   // 获取特定service中的特定method
   if (params.method) {
@@ -182,7 +196,7 @@ function convertFile(filePath) {
     if (params.outext === '.js') { // js 类型输出
       outputResult = jsFileHeader + stringifyObject(res, {
         indent: '  ',
-      });
+      }) + ';';
     } else { // .json 类型输出
       outputResult = JSON.stringify(res, undefined, 2);
     }

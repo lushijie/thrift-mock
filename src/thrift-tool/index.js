@@ -12,6 +12,11 @@ module.exports = class ThriftTool {
     this.includeFile = {}; // includeFile ast content
     this.includeAlias = {}; // include 文件别名映射
     this.includeStack = []; // 当前 include 堆栈情况
+    this.auto = false; // 自动生成mock数据，可能是非语义化数据
+  }
+
+  getAuto() {
+    return this.auto;
   }
 
   // 根据类型设置存储
@@ -178,7 +183,8 @@ module.exports = class ThriftTool {
   }
 
   // 入口
-  parse({filePath, name}) {
+  parse({filePath, name, auto}) {
+    this.auto = auto;
     const sourceResult = new Thriftrw({
       strict: false,
       entryPoint: path.resolve(filePath),

@@ -28,7 +28,8 @@
     "commander": "^2.19.0",
     "core-util-is": "^1.0.2",
     "inquirer": "^6.2.0",
-    "node-thrift-parser": "^0.1.3",
+    "random": "^2.0.12",
+    "randomstring": "^1.1.5",
     "stringify-object": "^3.3.0"
   },
   "devDependencies": {

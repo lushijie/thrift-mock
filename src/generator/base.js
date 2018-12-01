@@ -1,4 +1,7 @@
+const Utils = require('@lushijie/utils');
 const Icon = require('../constants/icon');
+const Random = require('../random');
+
 module.exports = function({syntax, thriftTool}) {
   const {
     valueStyle,
@@ -16,6 +19,12 @@ module.exports = function({syntax, thriftTool}) {
       }
       if (optional) {
         prefix = `${Icon['optional']}_`;
+      }
+      if (thriftTool.auto) {
+        const fn = Random[valueType];
+        if (Utils.isFunction(fn)) {
+          return fn();
+        }
       }
       return `${prefix}${valueType}`;
     } else if (valueStyle === 'identifier') {

@@ -2,7 +2,7 @@ const Struct = require('./struct');
 const Utils = require('@lushijie/utils');
 const Base = require('../base');
 
-module.exports = function({syntax, thriftTool}) {
+module.exports = function({ syntax, thriftTool }) {
   let res = {};
   Object.keys(syntax.service).forEach(key => {
     res[key] = {
