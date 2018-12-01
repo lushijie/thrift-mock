@@ -191,7 +191,6 @@ function convertFile(filePath) {
 }
 
 function run(params) {
-  console.log(params);
   // if (!params.dir && !params.file) {
   //   console.log(chalk.red('✘ Please input dir or file of the thrift file...'));
   // }
