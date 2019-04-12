@@ -24,8 +24,8 @@ biu biu ... thrift-mock 就诞生了！ thrift-mock 是一个根据 .thrift 文�
   * 支持 const、enum、typedef、struct、exception、union、service 基本数据结构
   * 支持多层数据类型的嵌套
   * 支持多层数据结构的嵌套
-  * 支持 include thrift文件
-  * 支持 service 的 extend 语法
+  * 支持 include & include alias
+  * 支持 service extend
 
 ### 4. 如何使用
 
