@@ -1,10 +1,8 @@
 #!/usr/bin/env node
 
-/* eslint-disable */
 const fs = require('fs');
 const path = require('path');
 const program = require('commander');
-const Utils = require('@lushijie/utils');
 const chalk = require('chalk');
 const stringifyObject = require('stringify-object');
 const inquirer = require('inquirer');
@@ -12,9 +10,16 @@ const ThriftTool = require('../src');
 
 const jsFileHeader = `
 /**
-  * @Genetate by: thrift-mock
-  * @Github: https://github.com/lushijie/thrift-mock
-  * @Date: ${Utils.dateTimeFormat(new Date(), 'yyyy-MM-dd hh:mm:ss')}
+  * genetate by thrift-mock
+  * https://github.com/lushijie/thrift-mock
+  * ------------------------------------------------------------------
+  * legend:
+  *   '◎': 基本类型，如bool, byte, i16, i32, i64 ,double, string, void
+  *   '★': 必填字段
+  *   '☆': 选填字段
+  *   '✼': enum 类型
+  *   '┇': enum 数值连接符
+  * ------------------------------------------------------------------
  */
 
 module.exports = `;
@@ -24,132 +29,106 @@ program
   .version('1.0.0')
   .option('-d, --dir <value>', '编译文件目录下的所有 .thrfit 文件')
   .option('-f, --file <value>', '编译指定的单个 .thrift 文件')
-  .option('--name <value>', '输出特定的 thrift 结构，如只输出某一个 service 的名字')
-  .option('--method <value>', '输出 service 中的某个方法')
+  .option('--match <value>', '需要获取的数据结构, struct.User')
   .option('--output <value>', '输出目录, 默认文件所在目录')
-  .option('--outext <value>', '输出文件后缀，.js 或者 .json', '.js')
-  .option('--inext <value>', '输入文件后缀', '.thrift')
-  .option('--auto', '自动生成 mock 数据')
+  .option('--outputExt <value>', '输出文件后缀, .js 或者 .json', '.js')
+  .option('--inputExt <value>', '输入文件后缀', '.thrift')
+  .option('--auto', '自动生成 mock 数据');
 
+// for tmock inquirer
 program
   .command('run')
   .action(() => {
     let promps = [{
       type: 'list',
-      name: 'dfType',
+      name: 'dirOrFile',
       message: '请选择, 编译文件还是目录:',
       default: 'dir',
-      choices: [{
-          name: '目录',
-          value: 'dir'
-        }, {
-          name: '文件',
-          value: 'file'
-      }]
+      choices: [
+        { name: '目录', value: 'dir' },
+        { name: '文件', value: 'file' }
+      ]
     }];
     inquirer.prompt(promps).then(answers => {
-      params.dfType = answers.dfType;
-      const tempText = answers.dfType === 'dir' ? '目录路径' : '文件地址';
+      params.dirOrFile = answers.dirOrFile;
+
+      const thriftText = `请输入, ${answers.dirOrFile === 'dir' ? '目录路径' : '文件地址'}: `;
+      const matchText = '请输入, 要获取的数据结构(如service.serviceName.methodName), 默认全部: ';
       promps = [{
         type: 'input',
-        name: 'dfPath',
-        message: `请输入, ${tempText}:`,
-        validate: function (input) {
+        name: 'thrift', // thrift 路径，dir path 或者 file path
+        message: thriftText,
+        validate: (input) => {
           if (!input) {
-            console.log(chalk.red(`✘ 请输入${tempText}`));;
-            return false;
+            return console.log(chalk.red(`✘ ${thriftText}`));
           };
           return true;
         }
       }, {
-        type: 'list',
-        name: 'auto',
-        message: '是否自动生成 mock 数据',
-        default: false,
-        choices: [{
-            name: 'Y',
-            value: true
-          }, {
-            name: 'N',
-            value: false
-        }]
+        type: 'input',
+        name: 'match', // 需要获取的数据结构，如 service.serviceName.methodName
+        message: matchText
       }];
       inquirer.prompt(promps).then(answers => {
-        console.log(chalk.green('-- 以下参数都可以使用默认值 ---'));
-        params[params.dfType] = answers.dfPath;
-        params.auto = answers.auto;
-        const outputDefault = '默认 .thrift 文件所在的目录';
-        const nameDefault = '默认全部输出';
-        const methodDefault = '如果指定method, 则必须指定 name 为特定的 service 名称';
+        params.thrift = answers.thrift;
+        params.match = answers.match;
+
+        console.log(chalk.green('<<< 以下参数都可以使用默认值, 一路回车即可 >>>'));
+        const outputDefault = '默认与 thrift 文件相同位置:';
         promps = [{
           type: 'input',
           name: 'output',
-          message: `请输入，输出的目录路径:`,
-          default: outputDefault,
-        }, {
-          type: 'input',
-          name: 'name',
-          message: `请输入，特定的 thrift 结构名称(如某一个 struct 名称):`,
-          default: nameDefault,
-        }, {
-          type: 'input',
-          name: 'method',
-          message: `请输入，输出 service 中特定的 method:`,
-          default: methodDefault
+          message: '请输入，输出的目录路径:',
+          default: outputDefault
         }, {
           type: 'list',
-          name: 'outext',
-          message: '请选择，输出后缀:',
+          name: 'outputExt',
+          message: '请选择，输出文件的后缀:',
           default: '.js',
           choices: [
-            {
-              name: '.js',
-              value: '.js'
-            },
-            {
-              name: '.json',
-              value: '.json'
-            }
+            { name: '.js', value: '.js' },
+            { name: '.json', value: '.json' }
           ]
         }, {
           type: 'input',
-          name: 'inext',
-          message: `请输入，输入的 thrift 文件后缀:`,
-          default: '.thrift',
+          name: 'inputExt',
+          message: `请输入，输入文件的后缀:`,
+          default: '.thrift'
+        }, {
+          type: 'list',
+          name: 'auto',
+          message: '是否自动生成 mock 数据',
+          default: false,
+          choices: [
+            { name: 'Y', value: true },
+            { name: 'N', value: false }
+          ]
         }];
         inquirer.prompt(promps).then(answers => {
-          params.name = (answers.name === nameDefault) ? undefined : answers.name;
-          params.method = (answers.method === methodDefault) ? undefined : answers.method;
-          params.output = (answers.output === outputDefault) ? undefined : answers.output;
-          params.outext = answers.outext;
-          params.inext = answers.inext;
+          params.output = (answers.output === outputDefault) ? null : answers.output;
+          params.outputExt = answers.outputExt;
+          params.inputExt = answers.inputExt;
+          params.auto = answers.auto;
           run(params);
         });
       });
     });
   });
 
-program.parse(process.argv);
-
-params = {
-  dir: program.dir,
-  file: program.file,
-  output: program.output,
-  outext: program.outext,
-  inext: program.inext,
-  method: program.method,
-  name: Utils.isFunction(program.name) ? undefined : program.name, // 参数形式下不传name，默认返回funtion
-  auto: program.auto
-};
-
-function getFileFromDir(dir, ext){
+/**
+ * 在 dir 文件夹中查找 ext 后缀的文件，返回文件路径列表
+ * @param {string} dir 目录
+ * @param {string} ext 后缀
+ * @return {array} 文件路径数组
+ */
+function getFileFromDir(dir, ext) {
   let res = [];
   if (!fs.existsSync(dir)) {
     console.log(chalk.red('✘ 输入的路径不存在，请检查:', dir));
     return res;
   }
   const files = fs.readdirSync(dir);
-  for(let i = 0; i< files.length; i++) {
+  for (let i = 0; i < files.length; i++) {
     var filename = path.join(dir, files[i]);
     var stat = fs.lstatSync(filename);
     if (stat.isDirectory()) {
@@ -161,21 +140,25 @@ function getFileFromDir(dir, ext){
   return res;
 };
 
-function convertFile(filePath) {
+/**
+ * @description thrift 文件解析
+ * @param {string} filePath 文件路径
+ */
+function parseThriftFile(filePath) {
   let outputPath = params.output;
-  outputPath = outputPath || path.dirname(filePath);   // 未指定，使用filePath dirname
+  outputPath = outputPath || path.dirname(filePath); // 未指定，使用filePath dirname
   outputPath = path.resolve(outputPath);
   filePath = path.resolve(filePath);
 
   // 如果输入文件不带后缀，补充后缀
-  if (!filePath.endsWith(params.inext)) {
-    filePath = filePath + params.inext;
+  if (!filePath.endsWith(params.inputExt)) {
+    filePath = filePath + params.inputExt;
   }
   const fileName = path.parse(filePath).name;
 
   // 如果输出不带后缀，则当做一个目录输出
   if (!(outputPath.endsWith('.js') || outputPath.endsWith('.json'))) {
-    outputPath = path.join(outputPath, fileName + '.mock' + params.outext);
+    outputPath = path.join(outputPath, fileName + '.mock' + params.outputExt);
   }
 
   if (!fs.existsSync(filePath)) {
@@ -183,20 +166,23 @@ function convertFile(filePath) {
   }
 
   const thriftTool = new ThriftTool();
-  let res = thriftTool.parse({filePath, name: params.name, auto: params.auto}) || {};
+  let res = thriftTool.parse({filePath, auto: params.auto}) || {};
 
-  // 获取特定service中的特定method
-  if (params.method) {
-    res = res[params.method];
+  if (params.match) {
+    const condition = params.match.split('.');
+    while (condition.length) {
+      const key = condition.shift();
+      res = res[key];
+    }
   }
 
   // 输出到文件
   if (res) {
     console.log(chalk.green(`✔︎ 编译成功 ${outputPath}`));
     let outputResult = '';
-    if (params.outext === '.js') { // js 类型输出
+    if (params.outputExt === '.js') { // js 类型输出
       outputResult = jsFileHeader + stringifyObject(res, {
-        indent: '  ',
+        indent: '  '
       }) + ';';
     } else { // .json 类型输出
       outputResult = JSON.stringify(res, undefined, 2);
@@ -205,24 +191,32 @@ function convertFile(filePath) {
   }
 }
 
+/**
+ * @description 主函数
+ * @param { Object } params 运行参数
+ * @returns undefined
+ */
 function run(params) {
-  // if (!params.dir && !params.file) {
-  //   console.log(chalk.red('✘ Please input dir or file of the thrift file...'));
-  // }
-
-  if (!params.name && params.method) {
-    return console.log(chalk.red('✘ name is required if method exist...'));
-  }
-
-  if (params.file) {
-    convertFile(params.file)
-  } else if (params.dir) {
-    getFileFromDir(params.dir, params.inext).forEach(function(filePath) {
-      convertFile(filePath);
+  if (params.dirOrFile === 'file') {
+    parseThriftFile(params.thirft);
+  } else if (params.dirOrFile === 'dir') {
+    getFileFromDir(params.thrift, params.inputExt).forEach(function(filePath) {
+      parseThriftFile(filePath);
     });
   }
 }
 
-if (params.dir || params.file) {
+// for tmock cli
+program.parse(process.argv);
+params = {
+  dirOrFile: program.dir ? 'dir' : 'file',
+  thrift: program.dir || program.file,
+  match: program.match,
+  output: program.output,
+  outputExt: program.outputExt,
+  inputExt: program.inputExt,
+  auto: program.auto
+};
+if (params.thrift) {
   run(params);
 }

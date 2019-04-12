@@ -1,3 +1,6 @@
 {
-  "extends": "meishi"
+  "extends": "meishi",
+  "rules": {
+    "no-console": ["off"]
+  }
 }
