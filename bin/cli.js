@@ -198,7 +198,7 @@ function parseThriftFile(filePath) {
  */
 function run(params) {
   if (params.dirOrFile === 'file') {
-    parseThriftFile(params.thirft);
+    parseThriftFile(params.thrift);
   } else if (params.dirOrFile === 'dir') {
     getFileFromDir(params.thrift, params.inputExt).forEach(function(filePath) {
       parseThriftFile(filePath);
